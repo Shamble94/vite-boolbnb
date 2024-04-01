@@ -3,6 +3,7 @@ import { store } from '../store'
 import axios from 'axios';
 import AppCard from './AppCard.vue';
 
+
 export default {
   name: 'AppMain', // Cambiato nome per evitare confusione
   components: {
@@ -12,18 +13,13 @@ export default {
   data() {
     return {
       store,
-
-   
-      minBeds: 0,
-      minBedsInput: '', // Input field value
-      apartments: [],
       ListaAppartamenti: [],
       // Per la barra di ricerc
       ListaFiltrata: [],
       citta: '',
+      distanza: null,
       camere: null,
       letti: null,
-
       activeImage: 0,
       // img che prende il carosello
       slides: [
@@ -35,10 +31,6 @@ export default {
       ],
     };
   },
-
-
-
-  
 
   methods: {
     ricerca() {
@@ -52,7 +44,7 @@ export default {
         const filtroCamere = this.camere === null || appartamento.rooms >= this.camere;
         const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
        
-        return filtroCamere && filtroBagni && filtroLetti;
+        return filtroCamere && filtroLetti;
       });
     },
 
@@ -110,9 +102,9 @@ export default {
 
       <!-- Barra di ricerca -->
       <div class="barra-ricerca">
-        <input type="text"  placeholder="Inserisci città o indirizzo">
+        <input type="number" v-model="distanza" placeholder="Distanza">
+        <div id="searchBoxContainer"></div>
         <input type="number" v-model="camere" placeholder="Numero di camere">
-        <input type="number" v-model="bagni" placeholder="Numero di bagni">
         <input type="number" v-model="letti" placeholder="Numero di letti">
         <button @click="ricerca">Cerca</button>
       </div>
@@ -126,6 +118,7 @@ export default {
     </div>
   </div>
 </template>
+
 
 
 <style lang="scss" scoped>
@@ -142,7 +135,7 @@ export default {
 
 .carousel img {
   width: 100%;
-  height: calc(100vh - 81px);
+  height: calc(75vh - 81px);
   object-fit: cover;
   object-position: center;
 }
