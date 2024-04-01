@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="m-3">
   <h2>Contatta il proprietario dell'appartamento</h2>
   <div>
     <input type="hidden" name="_token" :value="csrfToken">
