@@ -40,9 +40,7 @@ export default {
                         </div>
                 </div>
                 <div class="col-8">
-                    <div class="ricerca d-flex align-items-center justify-content-center">
-                        Gli input ricerca andranno qui
-                    </div>
+                
                 </div>
 
                 <!-- Pulsante venditore -->

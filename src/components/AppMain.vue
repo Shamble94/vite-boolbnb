@@ -12,11 +12,17 @@ export default {
   data() {
     return {
       store,
+
    
       minBeds: 0,
       minBedsInput: '', // Input field value
       apartments: [],
       ListaAppartamenti: [],
+      // Per la barra di ricerc
+      ListaFiltrata: [],
+      citta: '',
+      camere: null,
+      letti: null,
 
       activeImage: 0,
       // img che prende il carosello
@@ -30,36 +36,27 @@ export default {
     };
   },
 
-  methods:
-   {
-    async fetchApartments() {
-            try {
-                const response = await axios.get('http://127.0.0.1:8000/api/apartments', {
-                    params: {
-                        minBeds: this.minBeds
-                    }
-                });
-                console.log(response);
-                this.apartments = response.data.results;
-            } catch (error) {
-                console.error('Error fetching apartments:', error);
-            }
-        },
-        applyFilter() {
-            // Convert input value to integer
-            const minBedsInput = parseInt(this.minBedsInput);
-            // Check if input value is valid
-            if (!isNaN(minBedsInput)) {
-                // Update minBeds with the input value
-                this.minBeds = minBedsInput;
-                // Fetch apartments with the new filter
-                this.fetchApartments();
-            } else {
-                // Handle invalid input
-                console.error('Invalid input for minimum beds');
-            }
-        },
+
+
   
+
+  methods: {
+    ricerca() {
+      // Ripopola l'array completa
+      this.ListaFiltrata = this.ListaAppartamenti
+
+      // Filtra l'array ListaFiltrata in base ai valori inseriti
+      this.ListaFiltrata = this.ListaAppartamenti.filter(appartamento => {
+
+        // Filtra per numero di camere, bagni e letti
+        const filtroCamere = this.camere === null || appartamento.rooms >= this.camere;
+        const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
+       
+        return filtroCamere && filtroBagni && filtroLetti;
+      });
+    },
+
+
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
@@ -83,27 +80,21 @@ export default {
 
   },
   created() {
-    this.fetchApartments();
     // Start del carosello
     this.startAutoPlay();
 
-    // Effettua la chiamata per recuperare gli appartamenti
+    // Effettua la chiamata per recuperare tutti gli appartamenti
     axios.get('http://127.0.0.1:8000/api/apartments').then((response) => {
       this.ListaAppartamenti = response.data.results;
+      this.ListaFiltrata = this.ListaAppartamenti
 
-    })},
-  }
+    })
+  },
+}
 
 </script>
 
 <template>
-         <div>
-        <input type="number" v-model="minBedsInput" placeholder="Minimum Beds">
-        <button @click="applyFilter">Apply Filter</button>
-        
-        <!-- Your existing template code for displaying apartments -->
-    </div>
-    
   <div class="relative">
     <div class="carousel">
       <img v-for="(slide, index) in slides" :src="slide.image" :key="index" @click="setImg(index)"
@@ -115,20 +106,23 @@ export default {
   <!-- Contenuto -->
   <div class="container">
     <div class="row">
-      <h1 class="col-12 text-center my-5">Le nostre case disponibili</h1>
+      <h1 class="col-12 text-center my-5">Segli la casa per il tuo viaggio</h1>
+
+      <!-- Barra di ricerca -->
+      <div class="barra-ricerca">
+        <input type="text"  placeholder="Inserisci città o indirizzo">
+        <input type="number" v-model="camere" placeholder="Numero di camere">
+        <input type="number" v-model="bagni" placeholder="Numero di bagni">
+        <input type="number" v-model="letti" placeholder="Numero di letti">
+        <button @click="ricerca">Cerca</button>
+      </div>
 
       <!-- Liste card -->
-      <template v-if="apartments.length > 0">
-          <!-- Liste card -->
-          <AppCard v-for="card, index in apartments" :key="index" :card="card" />
-        </template>
-        <!-- If there are no apartments matching the filter criteria -->
-        <template v-else>
-          <div class="text-center my-5">
-            
-            <p>Non ci sono appartamenti con questo criterio</p>
-          </div>
-        </template>
+
+  
+
+      <AppCard v-for="card, index in this.ListaFiltrata" :key="index" :card="card" />
+
     </div>
   </div>
 </template>
@@ -155,5 +149,36 @@ export default {
 
 .carousel img:not(.active) {
   display: none;
+}
+
+.barra-ricerca {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+input[type="text"],
+input[type="number"] {
+  padding: 10px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 200px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #000000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #292a2b;
 }
 </style>
