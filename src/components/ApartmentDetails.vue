@@ -60,7 +60,7 @@ export default {
         <!-- Apartment details content -->
 
         <!-- Button to navigate to the message form -->
-        <button @click="redirectToMessageForm">Send Message to Owner</button>
+        <button class="p-1" @click="redirectToMessageForm">Chiedi informazioni</button>
 
         </div>
             </div>
