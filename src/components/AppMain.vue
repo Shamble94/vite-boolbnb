@@ -3,6 +3,7 @@ import { store } from '../store'
 import axios from 'axios';
 import AppCard from './AppCard.vue';
 
+
 export default {
   name: 'AppMain', // Cambiato nome per evitare confusione
   components: {
@@ -11,6 +12,7 @@ export default {
 
   data() {
     return {
+      
       store,
       // Per chiamata axios completa
       ListaAppartamenti: [],
@@ -18,9 +20,10 @@ export default {
       // Per la barra di ricerca
       ListaFiltrata: [],
       citta: '',
-      camere: 0,
-      bagni: 0,
-      letti: 0,
+      distanza: null,
+      camere: null,
+      bagni: null,
+      letti: null,
 
       activeImage: 0,
       // img che prende il carosello
@@ -43,11 +46,11 @@ export default {
       this.ListaFiltrata = this.ListaAppartamenti.filter(appartamento => {
 
         // Filtra per numero di camere, bagni e letti
-        const filtroCamere = this.camere === 0 || appartamento.rooms >= this.camere;
-        const filtroBagni = this.bagni === 0 || appartamento.bathrooms >= this.bagni;
-        const filtroLetti = this.letti === 0 || appartamento.beds >= this.letti;
+        const filtroCamere = this.camere === null || appartamento.rooms >= this.camere;
+    
+        const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
        
-        return filtroCamere && filtroBagni && filtroLetti;
+        return filtroCamere && filtroLetti;
       });
     },
 
@@ -105,9 +108,9 @@ export default {
 
       <!-- Barra di ricerca -->
       <div class="barra-ricerca">
-        <input type="text"  placeholder="Inserisci città o indirizzo">
+        <input type="number" v-model="distanza" placeholder="Distanza">
+        <div id="searchBoxContainer"></div>
         <input type="number" v-model="camere" placeholder="Numero di camere">
-        <input type="number" v-model="bagni" placeholder="Numero di bagni">
         <input type="number" v-model="letti" placeholder="Numero di letti">
         <button @click="ricerca">Cerca</button>
       </div>
@@ -117,6 +120,7 @@ export default {
     </div>
   </div>
 </template>
+
 
 
 <style lang="scss" scoped>
@@ -133,7 +137,7 @@ export default {
 
 .carousel img {
   width: 100%;
-  height: calc(100vh - 81px);
+  height: calc(75vh - 81px);
   object-fit: cover;
   object-position: center;
 }
