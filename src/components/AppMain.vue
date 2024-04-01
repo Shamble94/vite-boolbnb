@@ -12,6 +12,10 @@ export default {
   data() {
     return {
       store,
+   
+      minBeds: 0,
+      minBedsInput: '', // Input field value
+      apartments: [],
       ListaAppartamenti: [],
 
       activeImage: 0,
@@ -26,7 +30,36 @@ export default {
     };
   },
 
-  methods: {
+  methods:
+   {
+    async fetchApartments() {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/api/apartments', {
+                    params: {
+                        minBeds: this.minBeds
+                    }
+                });
+                console.log(response);
+                this.apartments = response.data.results;
+            } catch (error) {
+                console.error('Error fetching apartments:', error);
+            }
+        },
+        applyFilter() {
+            // Convert input value to integer
+            const minBedsInput = parseInt(this.minBedsInput);
+            // Check if input value is valid
+            if (!isNaN(minBedsInput)) {
+                // Update minBeds with the input value
+                this.minBeds = minBedsInput;
+                // Fetch apartments with the new filter
+                this.fetchApartments();
+            } else {
+                // Handle invalid input
+                console.error('Invalid input for minimum beds');
+            }
+        },
+  
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
@@ -50,6 +83,7 @@ export default {
 
   },
   created() {
+    this.fetchApartments();
     // Start del carosello
     this.startAutoPlay();
 
@@ -61,7 +95,15 @@ export default {
   }
 
 </script>
+
 <template>
+         <div>
+        <input type="number" v-model="minBedsInput" placeholder="Minimum Beds">
+        <button @click="applyFilter">Apply Filter</button>
+        
+        <!-- Your existing template code for displaying apartments -->
+    </div>
+    
   <div class="relative">
     <div class="carousel">
       <img v-for="(slide, index) in slides" :src="slide.image" :key="index" @click="setImg(index)"
@@ -76,8 +118,17 @@ export default {
       <h1 class="col-12 text-center my-5">Le nostre case disponibili</h1>
 
       <!-- Liste card -->
-      
-      <AppCard v-for="card, index in this.ListaAppartamenti" :key="index" :card="card" />
+      <template v-if="apartments.length > 0">
+          <!-- Liste card -->
+          <AppCard v-for="card, index in apartments" :key="index" :card="card" />
+        </template>
+        <!-- If there are no apartments matching the filter criteria -->
+        <template v-else>
+          <div class="text-center my-5">
+            
+            <p>Non ci sono appartamenti con questo criterio</p>
+          </div>
+        </template>
     </div>
   </div>
 </template>
