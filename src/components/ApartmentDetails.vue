@@ -88,9 +88,6 @@ export default {
 
 </template>
 
-
-
-
 <style lang="scss" scoped>
 .img-copertina {
     width: 100%;
