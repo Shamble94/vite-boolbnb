@@ -34,18 +34,20 @@ export default {
                         </defs>
                     </svg>
                 </router-link>
+
+
                             <div class="ms-3 fs-4 logo-write fw-bolder">
-                                BoolBnB
+                                <router-link :to="{ name: 'app-main'}">BoolBnB</router-link>
                             </div>
                         </div>
-                </div>
+                    </div>
                 <div class="col-8">
                 
                 </div>
 
                 <!-- Pulsante venditore -->
                 <div class="col-2 d-flex align-items-center justify-content-end">
-                    <button type="button" class="btn btn-dark"><a href="http://127.0.0.1:8000/login" >Modalità venditore</a></button>
+                    <button type="button" class="btn btn-dark "><a href="http://127.0.0.1:8000/login" class="white-text" >Modalità venditore</a></button>
                 </div>
             </div>
         </div>
@@ -61,7 +63,7 @@ header {
     background-color: white;
 
     a {
-        color: white;
+        color: black;
         text-decoration: none;
     }
 
@@ -71,5 +73,9 @@ header {
         border-radius: 30px;
         height: 60px;
     }
+    .white-text{
+        color: white;
+    }
 }
+
 </style>

@@ -82,7 +82,21 @@ export default {
 
     })
   },
-}
+
+  mounted(){
+    const recaptchaScript = document.createElement("script");
+    recaptchaScript.setAttribute(
+      "src",
+      "https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.1.2-public-preview.15/services/services-web.min.js"
+    );
+    document.body.appendChild(recaptchaScript);
+    const scrpt2 = document.createElement("script");
+    scrpt2.setAttribute(
+      "src",
+      "/tomtom-input.js"
+    );
+    document.body.appendChild(scrpt2);
+  }}
 
 </script>
 
@@ -101,18 +115,33 @@ export default {
       <h1 class="col-12 text-center my-5">Segli la casa per il tuo viaggio</h1>
 
       <!-- Barra di ricerca -->
-      <div class="barra-ricerca">
-        <input type="number" v-model="distanza" placeholder="Distanza">
-        <div id="searchBoxContainer"></div>
-        <input type="number" v-model="camere" placeholder="Numero di camere">
-        <input type="number" v-model="letti" placeholder="Numero di letti">
-        <button @click="ricerca">Cerca</button>
+      <div class="barra-ricerca ">
+        <div id="indirizzoSearchBox"></div>
+        <!-- Distanza -->
+        <div>
+          <label class=" m-1 d-block">Distanza</label>
+          <input type="number" v-model="distanza" placeholder="Scegli la distanza">
+        </div>
+        <!-- <div id="searchBoxContainer"></div> -->
+
+        <!-- Numero camere -->
+        <div>
+          <label class="m-1 d-block">Numero di camere</label>
+          <input type="number" v-model="camere" placeholder="Numero di camere">
+        </div>
+
+        <!-- Numero letti -->
+        <div>
+          <label class="m-1 d-block">Numero di letti</label>
+          <input type="number" v-model="letti" placeholder="Numero letti">
+        </div>
+
+        <div class="mx-2">
+          <button @click="ricerca">Cerca</button>
+        </div>
       </div>
 
       <!-- Liste card -->
-
-  
-
       <AppCard v-for="card, index in this.ListaFiltrata" :key="index" :card="card" />
 
     </div>
