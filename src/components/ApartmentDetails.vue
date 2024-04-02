@@ -28,32 +28,32 @@ export default {
           this.apartment = response.data.result;
           console.log(this.apartment);
           this.loader = true;
-          this.initializeMap(); 
+          this.initializeMap();
         });
     },
     redirectToMessageForm() {
       this.$router.push({ name: "MessageForm" });
     },
-    
+
     initializeMap() {
-        if (!this.map && this.apartment) {
-    const longitude = this.apartment.longitude;
-    const latitude = this.apartment.latitude;
-    console.log(longitude, latitude);
+      if (!this.map && this.apartment) {
+        const longitude = this.apartment.longitude;
+        const latitude = this.apartment.latitude;
+        console.log(longitude, latitude);
 
-    this.map = tt.map({
-      key: this.apiKey,
-      container: this.$refs.map
-    });
+        this.map = tt.map({
+          key: this.apiKey,
+          container: this.$refs.map,
+        });
 
-    this.map.setCenter([longitude, latitude]);
-    this.map.setZoom(16);
-
-  }
-    }
-  }
+        this.map.setCenter([longitude, latitude]);
+        this.map.setZoom(16);
+      }
+    },
+  },
 };
 </script>
+
 <template>
   <div class="container" v-if="loader">
     <div class="row">
@@ -96,19 +96,73 @@ export default {
             Chiedi informazioni
           </button>
 
-          <div>
-    </div>
+          <div></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div ref="map" style="width: 100%; height: 100%;"></div>
-
+  <div ref="map" style="width: 100%; height: 100%"></div>
 </template>
 
 <style lang="scss" scoped>
 img {
   width: 400px;
+}
+
+.apartment-details p {
+  font-size: 20px;
+}
+.services-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+}
+.service-item {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  i {
+    margin-right: 5px;
+  }
+}
+.apartments {
+  font-size: 35px;
+}
+.img {
+  display: flex;
+  justify-content: center;
+}
+.back-main {
+  background-color: yellow;
+}
+/* Stili SCSS */
+.image-container {
+  width: 100%; /* o una larghezza fissa a seconda delle tue esigenze */
+  padding-top: 100%; /* Questo mantiene l'aspetto quadrato */
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/* Assicurati che il contenitore dell'immagine mantenga il suo aspetto quadrato anche in responsive */
+@media (max-width: 768px) {
+  .image-container {
+    width: 100%; /* Ajusta secondo necessità */
+    padding-top: 100%;
+  }
+}
+.secondary-image img {
+  width: 100%;
+  height: auto;
+  display: block; /* Assicura che le immagini si estendano per tutta la larghezza del contenitore */
+  object-fit: cover; /* Opzionale: assicura che le immagini coprano lo spazio disponibile senza perdere le proporzioni */
+}
+
+.main-image img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 </style>
