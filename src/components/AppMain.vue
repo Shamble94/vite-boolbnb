@@ -75,12 +75,16 @@ export default {
     // Start del carosello
     this.startAutoPlay();
 
-    // Effettua la chiamata per recuperare tutti gli appartamenti
-    axios.get('http://127.0.0.1:8000/api/apartments').then((response) => {
-      this.ListaAppartamenti = response.data.results;
-      this.ListaFiltrata = this.ListaAppartamenti
-
-    })
+    axios.get('http://127.0.0.1:8000/api/apartments', {
+        params: {
+            orderBySponsorship: true 
+        }
+    }).then((response) => {
+        const sponsoredApartments = response.data.results.filter(apartment => apartment.adv_level);
+        const nonSponsoredApartments = response.data.results.filter(apartment => !apartment.adv_level);
+        this.ListaAppartamenti = [...sponsoredApartments, ...nonSponsoredApartments];
+        this.ListaFiltrata = this.ListaAppartamenti;
+    });
   },
 }
 
@@ -110,9 +114,6 @@ export default {
       </div>
 
       <!-- Liste card -->
-
-  
-
       <AppCard v-for="card, index in this.ListaFiltrata" :key="index" :card="card" />
 
     </div>
