@@ -75,6 +75,21 @@ export default {
                     <span>{{ apartment.square_meters }} m²</span>
                     </div>
                 </div>
+                <div class="container my-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="fs-4 fw-semibold ">Cosa Troverai:</div>
+                            <div class="col-6 mt-4">
+                            <div class="card" style="width: 18rem;">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">An item</li>
+    <li class="list-group-item">A second item</li>
+    <li class="list-group-item">A third item</li>
+  </ul>
+  <div class="card-footer">
+    Card footer
+  </div>
+</div></div>
                 <div v-if="apartment.services && apartment.services.length > 0">
                     <h3>Servizi:</h3>
                     <ul class="list-unstyled services-list">
@@ -83,7 +98,15 @@ export default {
                         </li>
                     </ul>
                 </div>
-                <button class="btn-info m-5" @click="redirectToMessageForm">Chiedi informazioni</button>
+                        </div>
+                        <div class="col-6">
+                            <div class="fs-4 fw-semibold">Posizione esatta dell'appartamento:</div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-info m-5" @click="redirectToMessageForm">Chiedi informazioni al gestorejkb</button>
             </div>
         </div>
 </template>
