@@ -4,6 +4,10 @@ import axios from 'axios';
 import AppCard from './AppCard.vue';
 
 
+/* FIXME: NELL'INPUT SE IO INSERISCO LA CITTA' DEVE CERCARE QUESTA IN BASE ALLE COORDINATE. 
+          SE LE COORDINATE SI TROVANO ENTRO UN RAGGIO DI 20KM ALLORA E' CORRETTO.
+*/
+
 export default {
   name: 'AppMain', // Cambiato nome per evitare confusione
   components: {
@@ -13,13 +17,20 @@ export default {
   data() {
     return {
       store,
+
+      /* LISTA DEGLI APPARTAMENTI IN UN ARRAY */
       ListaAppartamenti: [],
-      // Per la barra di ricerc
+
+      /* LA NUOVA LISTA FILTRATA PER GLI APPARTAMENTI CERCATI */
       ListaFiltrata: [],
+
+      /* LA CITTA' CERCATA */
       citta: '',
       distanza: null,
       camere: null,
       letti: null,
+
+      /* CAROSELLO */
       activeImage: 0,
       // img che prende il carosello
       slides: [
@@ -33,6 +44,10 @@ export default {
   },
 
   methods: {
+
+    /* FUNZIONE PER LA RICERCA */
+
+    /* TODO: INSERIRE LA RICERCA ATTRAVERSO LE COORDINATE */
     ricerca() {
       // Ripopola l'array completa
       this.ListaFiltrata = this.ListaAppartamenti
@@ -97,6 +112,11 @@ export default {
         :class="{ active: index === activeImage }" class="sfondo"
         :style="{ display: index === activeImage ? 'block' : 'none' }" alt="slider" />
     </div>
+  </div>
+
+  <div class="search-bar">
+    <label for="letti">Numero letti</label>
+    <input type="number" v-model="letti" placeholder="Numero di letti">
   </div>
 
   <!-- Contenuto -->
