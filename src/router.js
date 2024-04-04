@@ -15,19 +15,11 @@ const router = createRouter({
             name: "ApartmentDetails",
             component: ApartmentDetails
         },
-<<<<<<< HEAD
-        // {
-        //     path: '/message-form',
-        //     name: 'MessageForm', 
-        //     component: MessageForm, 
-        //   },
-=======
         {
             // path: '/message-form',
             // name: 'MessageForm', // Name of the route
             // component: MessageForm, // Component for the message form
           },
->>>>>>> f4daa84ba8ae271faac8c3aeadecaef378a4e852
         
     ]
 });
