@@ -32,10 +32,11 @@ export default {
       distanza: null,
       stanze: null,
 
+
       /* 20KM DI DISTANZA DALLA RICERCA */
       distanza: 20,
       camere: null,
-
+      showNoApartmentsMessage: false,
       letti: null,
       longitude: null,
       latitude: null,
@@ -54,61 +55,75 @@ export default {
   },
 
   methods: {
-    /* FUNZIONE PER LA RICERCA */
+  async geocodeCity(city) {
+    try {
+      // Perform geocoding logic here
+      const coordinates = await this.performGeocoding(city);
+      return coordinates;
+    } catch (error) {
+      throw new Error("Geocoding failed: " + error.message);
+    }
+  },
 
-    /* TODO: INSERIRE LA RICERCA ATTRAVERSO LE COORDINATE */
-    ricerca() {
-      // Geocode the user's input city to get its coordinates
-      this.geocodeCity(this.citta)
-        .then((coordinates) => {
-          // Filter apartments based on user's input city and maximum distance
-          this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
-            const filtroStanze =
-              this.stanze === null || appartamento.rooms >= this.stanze;
-            const filtroLetti =
-              this.letti === null || appartamento.beds >= this.letti;
-            const distance = this.calculateDistance(
-              coordinates.latitude,
-              coordinates.longitude,
-              appartamento.latitude,
-              appartamento.longitude
-            );
-            const filtroDistanza =
-              this.distanza === null || distance <= this.distanza;
-            return filtroStanze && filtroLetti && filtroDistanza;
-          });
-        })
-        .catch((error) => {
-          console.error("Error geocoding city:", error);
+  async performGeocoding(city) {
+    // Your geocoding logic using an external API (e.g., TomTom)
+    // Example:
+    const apiKey = "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo";
+    const encodedCity = encodeURIComponent(city);
+    const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
+
+    const response = await axios.get(apiUrl);
+    const data = response.data;
+
+    if (data && data.results && data.results.length > 0) {
+      const lat = data.results[0].position.lat;
+      const lng = data.results[0].position.lon;
+      return { latitude: lat, longitude: lng };
+    } else {
+      throw new Error("No results found for the provided city.");
+    }
+  },
+
+  ricerca() {
+    // Reset filtered list
+    this.ListaFiltrata = [];
+
+    // Perform input validation
+    if (!this.citta.trim()) {
+      console.error("City name is required.");
+      return;
+    }
+
+    // Geocode the user's input city to get its coordinates
+    this.geocodeCity(this.citta)
+      .then((coordinates) => {
+        // Filter apartments based on user's input city, maximum distance, number of rooms, and number of beds
+        this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
+          const filtroStanze =
+            this.stanze === null || appartamento.rooms >= this.stanze;
+          const filtroLetti =
+            this.letti === null || appartamento.beds >= this.letti;
+          const distance = this.calculateDistance(
+            coordinates.latitude,
+            coordinates.longitude,
+            appartamento.latitude,
+            appartamento.longitude
+          );
+          const filtroDistanza =
+            this.distanza === null || distance <= this.distanza;
+          return filtroStanze && filtroLetti && filtroDistanza;
         });
-    },
-    geocodeCity(city) {
-      const apiKey = "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo";
-      const encodedCity = encodeURIComponent(city);
-      const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
 
-      return new Promise((resolve, reject) => {
-        axios
-          .get(apiUrl)
-          .then((response) => {
-            if (
-              response.data &&
-              response.data.results &&
-              response.data.results.length > 0
-            ) {
-              const lat = response.data.results[0].position.lat;
-              const lng = response.data.results[0].position.lon;
-              const coordinates = { latitude: lat, longitude: lng };
-              resolve(coordinates);
-            } else {
-              reject(new Error("No results found for the provided city."));
-            }
-          })
-          .catch((error) => {
-            reject(error);
-          });
+        // Check if no apartments match the filters
+        this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
+      })
+      .catch((error) => {
+        console.error("Error geocoding city:", error);
       });
-    },
+  },
+
+
+
 
     calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371; // Radius of the earth in km
@@ -141,68 +156,7 @@ export default {
       this.distanza = event.target.value;
     },
 
-    /* CALCOLO DELLA DISTANZA BASATA SU LONGITUDINE E LATITUDINE */
-    calculateDistance(lat1, lon1, lat2, lon2) {
-      const deltaLat = Math.abs(lat1 - lat2);
-      const deltaLon = Math.abs(lon1 - lon2);
-
-      /* CALCOLO APPROSSIMATIVO DELLA DISTANZA TRA I PUNTI DI LONGITUDINE E LATITUDINE */
-      const approxDistance =
-        Math.sqrt(deltaLat * deltaLat + deltaLon * deltaLon) * 111.319;
-
-      return approxDistance;
-    },
-
-    ricerca() {
-      // Ripopola l'array completa
-      this.ListaFiltrata = this.ListaAppartamenti;
-
-      /* PRENDE LE COORDINATE DELLA CITTA' CERCATA */
-      axios
-        .get(
-          "https://api.tomtom.com/search/2/geocode/" + this.citta + ".json",
-          {
-            params: {
-              key: "ARRIZGGoUek6AqDTwVcXta7pCZ07Q490",
-            },
-          }
-        )
-        .then((response) => {
-          /* PRENDE DALLA RICERCA LATITUDINE E LONGITUDINE */
-          const results = response.data.results;
-          this.latitude = results[0].position.lat;
-          this.longitude = results[0].position.lon;
-
-          /* FILTRAGGIO DI SOLI GLI APPARTAMENTI CHE SONO NEL RAGGIO DI 20KM */
-          this.ListaFiltrata = this.ListaFiltrata.filter((appartamento) => {
-            /* FUNZIONE DEL CALCOLO DELLA DISTANZA (VEDI SOPRA) */
-            const distance = this.calculateDistance(
-              appartamento.latitude,
-              appartamento.longitude,
-              this.latitude,
-              this.longitude
-            );
-
-            /* SE LA DISTANZA E' MINORE O UGUALE A 0 O NULLA CERCA COMUNQUE AD UN MINIMO DI 20KM */
-            if (this.distanza == null || this.distanza <= 0) {
-              this.distanza = 20;
-            }
-
-            return distance <= this.distanza;
-          });
-
-          /* FILTRA IN SEGUITO IN BASE AL NUMERO DI STANZE O LETTI */
-          this.ListaFiltrata = this.ListaFiltrata.filter((appartamento) => {
-            // Filtra per numero di camere, bagni e letti
-            const filtroCamere =
-              this.camere === null || appartamento.rooms >= this.camere;
-            const filtroLetti =
-              this.letti === null || appartamento.beds >= this.letti;
-
-            return filtroCamere && filtroLetti;
-          });
-        });
-    },
+  
 
 
     // manda la foto avanti di 1 ma se al max torno a 0
@@ -290,8 +244,19 @@ export default {
           placeholder="Inserisci il numero di letti"
         />
       </div>
+      <div class="search-elem">
+        <label for="beds-input">Quante stanze</label>
+        <input
+          type="text"
+          name="beds-input"
+          v-model="stanze"
+          id="beds-input"
+          placeholder="Inserisci il numero di stanze"
+        />
+      </div>
 
-      <div class="search-elem me-5">
+      
+     <!--  <div class="search-elem me-5">
         <label for="filter-input">Filtri</label>
         <i
           name="filter-input"
@@ -330,7 +295,7 @@ export default {
             />
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="search-btn" role="button" id="searchBtn" @click="ricerca">
         <svg
@@ -355,37 +320,6 @@ export default {
     </div>
   </div>
 
-  <!-- <div class="searchbar-size">
-  <div class="search-bar">
-        <div class="search-elem">
-          <label for="city" class="fw-bolder">Dove</label>
-          
-        </div>
-
-        <div class="search-elem">
-          <label for="rooms" class="fw-bolder">Numero letti</label>
-          <input type="number" v-model="camere" placeholder="Inserisci quanti letti" name="rooms" />
-        </div>
-
-        <div class="search-elem">
-          <label for="city" class="fw-bolder">Filtri</label>
-          <div class="filter-icon"><i class="fa-solid fa-sliders"></i></div>
-        </div>
-
-        <div class="search-elem">
-          <button @click="ricerca"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </div>
-
-        <div class="range-section">
-          <span>Raggio di distanza</span>
-          <input type="range" id="vol" name="vol" min="0" max="50">
-          <span>100km</span>
-        </div>
-      </div>
-
-
-
-</div> -->
 
   <!-- Contenuto -->
   <div class="container">
@@ -415,7 +349,9 @@ export default {
         <input type="number" v-model="letti" placeholder="Numero di letti" />
         
       </div> -->
-
+      <div v-if="showNoApartmentsMessage" class="no-apartments-message text-center">
+         Non ci sono appartamenti che rispecchiano i filtri inseriti
+      </div>
       <!-- Liste card -->
       <AppCard
         v-for="(card, index) in this.ListaFiltrata"
@@ -499,6 +435,7 @@ input[type="number"] {
   font-size: 20px;
   right: 50%;
   transform: translate(0, -100%);
+  z-index: 999;
 }
 
 .search-bar {
