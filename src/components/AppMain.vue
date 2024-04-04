@@ -26,7 +26,7 @@ export default {
       /* LA CITTA' CERCATA */
       citta: "",
       distanza: null,
-      camere: null,
+      stanze: null,
       letti: null,
 
       /* CAROSELLO */
@@ -52,8 +52,8 @@ export default {
         .then((coordinates) => {
           // Filter apartments based on user's input city and maximum distance
           this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
-            const filtroCamere =
-              this.camere === null || appartamento.rooms >= this.camere;
+            const filtroStanze =
+              this.stanze === null || appartamento.rooms >= this.stanze;
             const filtroLetti =
               this.letti === null || appartamento.beds >= this.letti;
             const distance = this.calculateDistance(
@@ -64,7 +64,7 @@ export default {
             );
             const filtroDistanza =
               this.distanza === null || distance <= this.distanza;
-            return filtroCamere && filtroLetti && filtroDistanza;
+            return filtroStanze && filtroLetti && filtroDistanza;
           });
         })
         .catch((error) => {
@@ -87,8 +87,6 @@ export default {
             ) {
               const lat = response.data.results[0].position.lat;
               const lng = response.data.results[0].position.lon;
-              console.log(lat);
-              console.log(lng);
               const coordinates = { latitude: lat, longitude: lng };
               resolve(coordinates);
             } else {

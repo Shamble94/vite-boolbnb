@@ -1,7 +1,9 @@
+
 <script>
 import { store } from "../store.js";
 import axios from "axios";
 import tt from "@tomtom-international/web-sdk-maps";
+
 
 export default {
   name: "ApartmentDetail",
@@ -22,44 +24,44 @@ export default {
     },
 
     created() {
-        this.getApartmentDetails();
+      this.getApartmentDetails();
     },
+ 
     methods: {
-    sendMessage() {
-      // Send message data to backend API endpoint
-      axios.post('http://127.0.0.1:8000/api/send-message', {
-        name: this.name,
-        email: this.email,
-        subject: this.subject,
-        message: this.message,
-        apartmentId: this.$route.params.id, // Assuming you have access to the apartment ID through the route
-      })
-      .then(response => {
-        // Handle success, e.g., show success message to user
-        console.log('Message sent successfully');
+        sendMessage() {
+           
+
+            // Definisco i dati che verranno passati al BE
+            const data = {
+                apartment_id: this.apartment.id,
+                name: this.name,
+                email: this.email,
+                subject: this.subject,
+                message: this.message,
+                date: new Date().toISOString().substring(0, 10),
+                
+            }
+
+            // Faccio la chiamata passando i dati
+            axios.post(`http://127.0.0.1:8000/api/message`, data).then((response) => {
+
+                if (response.data.succes) {
+                    this.name = '';
+                    this.email = '';
+                    this.subject = "";
+                    this.message = '';
+                  
+
+                    alert("Messaggio inviato con successo")
+                    this.$router.push('/'); // Adjust the route as needed
+                } else {
+                    this.errors = response.data.errors
+                }
+
+            })
+        },
         
-      })
-      .catch(error => {
-        // Handle error, e.g., show error message to user
-        console.error('Error sending message:', error);
-      });
-    },
 
-  data() {
-    return {
-      store,
-      apartment: null,
-      loader: false,
-      map: null,
-      apiKey: "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo",
-      marker: null,
-    };
-  },
-
-  created() {
-    this.getApartmentDetails();
-  },
-  methods: {
     getApartmentDetails() {
       axios
         .get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
@@ -125,72 +127,12 @@ export default {
     },
   },
 }
-}
 </script>
 
 <template>
 
      <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
-    <div class="container" v-if="loader">
-        <div class="row">
-            <h1 class="apartments my-4">{{ apartment.description }}</h1>
-            <div class="col-md-6">
-                <!-- Immagine Principale -->
-                <div class="main-image">
-                    <img v-if="apartment.image !== '0'" :src="`${store.baseUrl}/storage/${apartment.image}`"
-                        class="card-img-top" :alt="apartment.description" />
-                    <img v-else src="/placeholder2.png" class="card-img-top" :alt="apartment.description" />
-                </div>
-            </div>
-            <div class="col-md-6">
-                <!-- Griglia per Immagini Secondarie -->
-                <div class="row">
-                    <div class="col-6 secondary-image ">
-                        <img v-if="apartment.image !== '0'" :src="`${store.baseUrl}/storage/${apartment.image}`"
-                            class="img-fluid" :alt="apartment.description">
-
-                    </div>
-                    <div class="col-6 secondary-image">
-                        <img v-if="apartment.image !== '1'" :src="`${store.baseUrl}/storage/${apartment.image}`"
-                            class="img-fluid" :alt="apartment.description">
-
-                    </div>
-                    <div class="col-6 secondary-image mt-3">
-                        <img v-if="apartment.image !== '2'" :src="`${store.baseUrl}/storage/${apartment.image}`"
-                            class="img-fluid" :alt="apartment.description">
-                    </div>
-                    <div class="col-6 secondary-image mt-3">
-                        <img v-if="apartment.image !== '4'" :src="`${store.baseUrl}/storage/${apartment.image}`"
-                            class="img-fluid" :alt="apartment.description">
-
-                    </div>
-                </div>
-            </div>
-            <div class="apartment-details">
-                <p class="fs-3 fw-semibold my-3"> {{ apartment.location }}, Indirizzo per esteso da aggiungere</p>
-                <div class="fs-5">
-                    <span>{{ apartment.rooms }} Camere • </span>
-                    <span>{{ apartment.beds }} Letti •</span>
-                    <span>{{ apartment.bathrooms }} Bagni •</span>
-                    <span>{{ apartment.square_meters }} m²</span>
-                </div>
-            </div>
-            <!-- Check if there are services -->
-
-            <p>Servizi:</p>
-             <div v-if="apartment.services && apartment.services.length > 0">
-                <h3>Services:</h3>
-        
-        
-                <ul class="list-unstyled">
-                    <li v-for="(service, index) in apartment.services" :key="index">
-        
-                        <i :class="service.icon"></i><span class="mx-2">{{ service.name }}</span>
-                    </li>
-                </ul>
-            </div> 
-        </div> 
-    </div> 
+    <!--  -->
 
   <link
     rel="stylesheet"
@@ -200,26 +142,57 @@ export default {
   <div class="container" v-if="loader">
     <div class="row">
       <h1 class="apartments my-4">{{ apartment.description }}</h1>
-      <div class="col-md-6">
-        <!-- Immagine Principale -->
-        <div class="main-image">
-          <img
-            v-if="apartment.image !== '0'"
-            :src="`${store.baseUrl}/storage/${apartment.image}`"
-            class="card-img-top"
-            :alt="apartment.description"
-          />
-          <img
-            v-else
-            src="/placeholder2.png"
-            class="card-img-top"
-            :alt="apartment.description"
-          />
+        <div class="col-md-6 col-5">
+            <!-- Immagine Principale -->
+            <div class="main-image">
+                <img
+                    v-if="apartment.image !== '0'"
+                    :src="`${store.baseUrl}/storage/${apartment.image}`"
+                    class="card-img-top"
+                    :alt="apartment.description"
+                />
+                <img
+                    v-else
+                    src="/placeholder2.png"
+                    class="card-img-top"
+                    :alt="apartment.description"
+                />
+            </div>
+        </div>
+            <div class="col-6">
+                <div class="apartment-details">
+                  <p class="fs-3 fw-semibold my-3">
+                    {{ apartment.location }}
+                    <h5>{{ apartment.address }}</h5>
+                  </p>
+                  <p><h2>La casa dispone di:</h2></p>
+                  <ul class="fs-5 list-unstyled">
+                    <li>{{ apartment.rooms }} Camere  </li>
+                    <li>{{ apartment.beds }} Letti </li>
+                    <li>{{ apartment.bathrooms }} Bagni </li>
+                    <li>{{ apartment.square_meters }} m²</li>
+                    </ul>
+                <!-- Check if there are services -->
+    
+                <div v-if="apartment.services && apartment.services.length > 0">
+                  <h3>Servizi che troverai all'interno della casa:</h3>
+          
+                  <ul class="list-unstyled">
+                    <li v-for="(service, index) in apartment.services" :key="index">
+                      <i :class="service.icon"></i>
+                      <span class="mx-2">{{ service.name }}</span>
+                    </li>
+                  </ul>
+                </div>
+            </div>
+              
+            
+            </div>
         </div>
       </div>
       <div class="col-md-6">
         <!-- Griglia per Immagini Secondarie -->
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-6 secondary-image">
             <img
               v-if="apartment.image !== '0'"
@@ -252,60 +225,41 @@ export default {
               :alt="apartment.description"
             />
           </div>
-        </div>
+        </div> -->
       </div>
-      <div class="apartment-details">
-        <p class="fs-3 fw-semibold my-3">
-          {{ apartment.location }}, Indirizzo per esteso da aggiungere
-        </p>
-        <div class="fs-5">
-          <span>{{ apartment.rooms }} Camere • </span>
-          <span>{{ apartment.beds }} Letti •</span>
-          <span>{{ apartment.bathrooms }} Bagni •</span>
-          <span>{{ apartment.square_meters }} m²</span>
-        </div>
-      </div>
-      <!-- Check if there are services -->
-
-      <p>Servizi:</p>
-      <div v-if="apartment.services && apartment.services.length > 0">
-        <h3>Services:</h3>
-
-        <ul class="list-unstyled">
-          <li v-for="(service, index) in apartment.services" :key="index">
-            <i :class="service.icon"></i
-            ><span class="mx-2">{{ service.name }}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
 
 
-  <form @submit.prevent="sendMessage" class="m-3">
-    <label for="name">Nome</label>
-    <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome"><hr>
-    <label for="email">Email</label>
-    <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email"><hr>
-    <label for="subject">Soggetto</label>
-    <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio"><hr>
-    <label for="message">Messaggio</label>
-    <textarea v-model="message" id="message" placeholder="Scrivi qui il tuo messaggio"></textarea>
-    <button type="submit">Invia Messaggio</button>
-  </form>
+ 
 
-  </div>
   <div class="container">
     <div class="row">
-      <div class="col-6 mapx">
-        <p class="fs-3 fw-bold">Dove sarai</p>
+        <p class="fs-3 fw-bold mt-4">Dove sarai</p>
+      <div class="col-6 mapx mt-4">
         <div ref="map" id="map"></div>
         <!-- Assicurati di dare un'altezza esplicita -->
       </div>
     </div>
   </div>
-  <button class="p-1" @click="redirectToMessageForm">
-    Chiedi informazioni
-  </button>
+  <hr>
+  <div class="text-center m-2 border-1 ">
+
+      <h5>Invia un messaggio al proprietario</h5>
+  </div>
+  <hr>
+  <form @submit.prevent="sendMessage" class="m-3">
+    <label for="name">Nome</label>
+    <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required><hr>
+    <label for="email">Email</label>
+    <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required><hr>
+    <label for="subject">Soggetto</label>
+    <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required><hr>
+    <label for="message">Messaggio</label>
+    <textarea v-model="message" id="message" class="form-control"  required placeholder="Scrivi qui il tuo messaggio">
+    
+    </textarea>
+    <button type="submit" class="my-4 p-2">Invia Messaggio</button>
+  </form>
+
 
 </template>
 
