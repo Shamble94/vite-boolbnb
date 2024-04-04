@@ -17,7 +17,6 @@ const router = createRouter({
             name: "ApartmentDetails",
             component: ApartmentDetails
         },
-        
     ]
 });
 
