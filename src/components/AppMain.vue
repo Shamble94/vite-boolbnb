@@ -17,6 +17,9 @@ export default {
     return {
       store,
 
+      isCityInputActive: false,
+
+
       /* LISTA DEGLI APPARTAMENTI IN UN ARRAY */
       ListaAppartamenti: [],
 
@@ -47,6 +50,18 @@ export default {
   },
 
   methods: {
+
+    handleCityInputFocus() {
+      this.isCityInputActive = true;
+    },
+    handleCityInputBlur() {
+      this.isCityInputActive = false;
+    },
+
+    updateSliderValue(event) {
+      this.distanza = event.target.value;
+    },
+
     /* CALCOLO DELLA DISTANZA BASATA SU LONGITUDINE E LATITUDINE */
     calculateDistance(lat1, lon1, lat2, lon2) {
       const deltaLat = Math.abs(lat1 - lat2);
@@ -169,10 +184,103 @@ export default {
         :style="{ display: index === activeImage ? 'block' : 'none' }"
         alt="slider"
       />
-      <div class="search-bar">
+    </div>
+  </div>
+
+  <div class="searchbar-size">
+    <div class="search-bar">
+      <div class="search-elem">
+        <label for="city-input">Dove</label>
+        <input
+  type="text"
+  v-model="citta"
+  placeholder="Cerca le destinazioni"
+  name="city"
+  @focus="handleCityInputFocus"
+  @blur="handleCityInputBlur"
+/>
+      </div>
+
+      <div class="search-elem">
+        <label for="beds-input">Quanti letti</label>
+        <input
+          type="text"
+          name="beds-input"
+          v-model="letti"
+          id="beds-input"
+          placeholder="Inserisci il numero di letti"
+        />
+      </div>
+
+      <div class="search-elem me-5">
+        <label for="filter-input">Filtri</label>
+        <i
+          name="filter-input"
+          id="filter-input"
+          class="fa-solid fa-sliders"
+        ></i>
+
+        <div class="filter-section" id="filterSection">
+          <div class="number-room d-flex">
+            <span id="label-rooms">Numero stanze</span>
+            <input
+              type="number"
+              name="rooms-number"
+              min="0"
+              id="rooms-input"
+              class="rooms-number-input"
+            />
+          </div>
+          <div class="number-room d-flex">
+            <span id="label-rooms">Numero stanze</span>
+            <input
+              type="number"
+              name="rooms-number"
+              min="0"
+              id="rooms-input"
+              class="rooms-number-input"
+            />
+
+            <input
+              type="number"
+              name="rooms-number"
+              default="0"
+              min="0"
+              id="rooms-input"
+              class="rooms-number-input"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="search-btn" role="button" id="searchBtn" @click="ricerca">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="25"
+          fill="#fff"
+          class="bi bi-search"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+          />
+        </svg>
+      </div>
+
+      <div class="distance-filter-section" id="rangeSection" :class="{ 'active': isCityInputActive }">
+        <span id="title-distance">Raggio di distanza</span>
+        <input type="range" v-model="distanza" min="20" max="100" value="20" class="slider" id="radius-input" @input="updateSliderValue">
+        <span id="slider-value">{{ distanza }} km</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="searchbar-size">
+  <div class="search-bar">
         <div class="search-elem">
           <label for="city" class="fw-bolder">Dove</label>
-          <input type="text" v-model="citta" placeholder="Cerca le destinazioni" name="city"/>
+          
         </div>
 
         <div class="search-elem">
@@ -188,12 +296,17 @@ export default {
         <div class="search-elem">
           <button @click="ricerca"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
+
+        <div class="range-section">
+          <span>Raggio di distanza</span>
+          <input type="range" id="vol" name="vol" min="0" max="50">
+          <span>100km</span>
+        </div>
       </div>
-    </div>
-  </div>
 
-  
 
+
+</div> -->
 
   <!-- Contenuto -->
   <div class="container">
@@ -201,7 +314,7 @@ export default {
       <!-- <h1 class="col-12 text-center my-5">Segli la casa per il tuo viaggio</h1> -->
 
       <!-- Barra di ricerca -->
- <!--      <div class="barra-ricerca">
+      <!--      <div class="barra-ricerca">
         <input type="text" v-model="citta" placeholder="Città" />
         <input
           type="number"
@@ -228,7 +341,17 @@ export default {
 <style lang="scss" scoped>
 @use "../style/general.scss";
 
-.container{
+.distance-filter-section {
+  /* Stili di base */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.distance-filter-section .active {
+  opacity: 1;
+}
+
+.container {
   padding: 100px 0;
 }
 .relative {
@@ -269,71 +392,123 @@ input[type="number"] {
   width: 200px;
 }
 
-button {
-  width: 60px;
-  height: 60px;
-  background-color: #000000;
-  color: #fff;
-  border: none;
-  border-radius: 15px;
+.fa-sliders {
   cursor: pointer;
-  font-size: 16px;
-  margin-left: 20px;
+  transition-duration: 0.3s;
+  color: #7b7b7b;
+
+  &:hover {
+    color: #000;
+  }
 }
 
-button:hover {
-  background-color: #292a2b;
-}
-
-.search-bar{
-  padding: 10px 20px;
-  background-color: white;
-  position: absolute;
-  bottom: -50px;
-  border-radius: 10px;
+.searchbar-size {
+  width: 100%;
   display: flex;
   justify-content: center;
+  position: sticky;
+  top: 60px;
+  font-size: 20px;
+  right: 50%;
+  transform: translate(0, -100%);
+}
+
+.search-bar {
+  height: 100px;
+  background-color: rgb(255, 255, 255);
+  z-index: 999;
+  bottom: -50px;
+  box-shadow: 0px 6px 10px 5px rgba(42, 42, 42, 0.069);
+  border-radius: 20px;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0 25px;
+  position: relative;
 
-  .search-elem{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  .search-elem {
+    padding: 0 20px;
+    border-right: 1px solid rgb(213, 213, 213);
 
-    &:nth-last-child(2){
-      margin-right: 20px;
-      margin-bottom: 10px;
-    }
-
-    &:nth-last-child(3){
-      border-right: none;
-      border-right: 1px solid rgb(225, 225, 225);
-      border-left: 1px solid rgb(225, 225, 225);
-      padding: 0 30px;
-    }
-
-    input{
-      border: none;
-    }
-
-    label{
-      margin-left: 15px;
-    }
-
-    .filter-icon{
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-      color: #909090;
-      transition-duration: 0.3s;
-
-      &:hover{
-        cursor: pointer;
-        color: black;
-      }
+    &:nth-last-child(3) {
+      border-right: 1px solid rgba(253, 0, 0, 0);
     }
   }
+
+  .search-btn {
+    height: 60px;
+    width: 60px;
+    background-color: black;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .search-elem label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 800;
+  }
+
+  .search-elem input {
+    border: none;
+
+    &:focus {
+      outline: none !important;
+      border: 1px solid rgb(0, 0, 0);
+    }
+  }
+}
+
+.distance-filter-section {
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+
+  top: 120px;
+  border-radius: 10px;
+  opacity: 1;
+  transition-duration: 0.3s;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  padding: 0 50px;
+  font-size: 20px;
+}
+
+.filter-section {
+  width: 25%;
+  height: 70px;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+
+  right: 0;
+  top: 120px;
+  border-radius: 10px;
+  opacity: 0;
+  transition-duration: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 700;
+  padding: 0 50px;
+  font-size: 14px;
+
+  .rooms-number-input {
+    width: 40px;
+  }
+}
+
+.distance-filter-section {
+  height: 70px;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+}
+
+.slider {
+  width: 60%;
+  margin: 0 25px;
+  cursor: grab;
 }
 </style>
