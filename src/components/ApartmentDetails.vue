@@ -22,39 +22,72 @@ export default {
     },
     methods: {
         getApartmentDetails() {
-            axios
-                .get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
-                .then((response) => {
-                    this.apartment = response.data.result;
-                    console.log(this.apartment);
-                    this.loader = true;
-                    this.initializeMap();
-                });
+            axios.get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
+    .then((response) => {
+        this.apartment = response.data.result;
+        console.log("Appartamento:", this.apartment);
+        if(this.apartment && this.apartment.longitude && this.apartment.latitude) {
+            this.loader = true;
+            this.initializeMap();
+        } else {
+            console.error("Dati di longitudine o latitudine mancanti o non validi");
+        }
+    });
+
         },
         redirectToMessageForm() {
             this.$router.push({ name: "MessageForm" });
         },
 
         initializeMap() {
-            if (!this.map && this.apartment) {
-                const longitude = this.apartment.longitude;
-                const latitude = this.apartment.latitude;
-                console.log(longitude, latitude);
+    if (!this.map && this.apartment) {
+        const longitude = parseFloat(this.apartment.longitude);
+        const latitude = parseFloat(this.apartment.latitude);
 
-                this.map = tt.map({
-                    key: this.apiKey,
-                    container: this.$refs.map,
-                });
+        // Qui si verifica se le coordinate sono valide
+        if (isNaN(longitude) || isNaN(latitude)) {
+            console.error("Le coordinate non sono valide:", longitude, latitude);
+            return; // Interrompe l'esecuzione se le coordinate non sono numeri validi
+        }
+        this.map = tt.map({
+            key: this.apiKey,
+            container: this.$refs.map,
+            center: [longitude, latitude],
+            zoom: 16
+        });
 
-                this.map.setCenter([longitude, latitude]);
-                this.map.setZoom(16);
-            }
-        },
-    },
+        // Ascolta l'evento "load" della mappa
+        this.map.on('load', () => {
+            // La mappa è completamente caricata, ora puoi aggiungere il marker
+            this.marker = new tt.Marker()
+                .setLngLat([longitude, latitude])
+                .addTo(this.map);
+        });
+    
+
+        // Esempio di BoundingBox: definisce i limiti intorno alla posizione con una certa "distanza"
+        // Per semplicità, utilizzo valori fissi per creare il bbox attorno alla posizione dell'appartamento
+        const bboxPadding = 0.01; // Modifica questo valore per espandere o ridurre il bbox
+        const bbox = [
+            longitude - bboxPadding, // Min Longitude (o West)
+            latitude - bboxPadding, // Min Latitude (o South)
+            longitude + bboxPadding, // Max Longitude (o East)
+            latitude + bboxPadding // Max Latitude (o North)
+        ];
+
+        // Imposta i limiti della mappa per adattarla al BoundingBox
+        this.map.fitBounds(bbox, { padding: {top: 10, bottom:10, left: 10, right: 10}});
+    }
+},
+
+},
+
+
 };
 </script>
 
 <template>
+     <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
     <div class="container" v-if="loader">
         <div class="row">
             <h1 class="apartments my-4">{{ apartment.description }}</h1>
@@ -208,9 +241,9 @@ img {
     display: block;
 }
 
-#map::hover{
+#map{
  width: 100%;
- height: 100%;
+ height: 500px;
 
 }
 
