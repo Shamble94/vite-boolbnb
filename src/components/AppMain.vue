@@ -49,59 +49,104 @@ export default {
 
     /* TODO: INSERIRE LA RICERCA ATTRAVERSO LE COORDINATE */
     ricerca() {
-      // Ripopola l'array completa
-      this.ListaFiltrata = this.ListaAppartamenti
-
-      // Filtra l'array ListaFiltrata in base ai valori inseriti
-      this.ListaFiltrata = this.ListaAppartamenti.filter(appartamento => {
-
-        // Filtra per numero di camere, bagni e letti
-        const filtroCamere = this.camere === null || appartamento.rooms >= this.camere;
-        const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
-       
-        return filtroCamere && filtroLetti;
-      });
+      // Geocode the user's input city to get its coordinates
+      this.geocodeCity(this.citta)
+        .then(coordinates => {
+          // Filter apartments based on user's input city and maximum distance
+          this.ListaFiltrata = this.ListaAppartamenti.filter(appartamento => {
+            const filtroCamere = this.camere === null || appartamento.rooms >= this.camere;
+            const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
+            const distance = this.calculateDistance(
+              coordinates.latitude,
+              coordinates.longitude,
+              appartamento.latitude,
+              appartamento.longitude
+            );
+            const filtroDistanza = this.distanza === null || distance <= this.distanza;
+            return filtroCamere && filtroLetti && filtroDistanza;
+          });
+        })
+        .catch(error => {
+          console.error('Error geocoding city:', error);
+        });
     },
+    geocodeCity(city) {
+    const apiKey = 'GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo';
+    const encodedCity = encodeURIComponent(city);
+    const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
 
+    return new Promise((resolve, reject) => {
+      axios.get(apiUrl)
+        .then(response => {
+          if (response.data && response.data.results && response.data.results.length > 0) {
+            const lat = response.data.results[0].position.lat;
+            const lng = response.data.results[0].position.lon;
+            console.log(lat);
+            console.log(lng)
+            const coordinates = { latitude: lat, longitude: lng };
+            resolve(coordinates);
+          } else {
+            reject(new Error('No results found for the provided city.'));
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+},
 
-    // manda la foto avanti di 1 ma se al max torno a 0
-    nextImg() {
-      if (this.activeImage === this.slides.length - 1) {
-        this.activeImage = 0;
-      } else {
-        this.activeImage++;
-      }
+    calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radius of the earth in km
+      const dLat = this.deg2rad(lat2 - lat1);
+      const dLon = this.deg2rad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c; // Distance in km
+      return distance;
     },
-    setImg(index) {
-      this.activeImage = index;
+    deg2rad(deg) {
+      return deg * (Math.PI / 180);
     },
-
-    // Funzione per cambiare ogni TOT tempo il carosello
-    startAutoPlay() {
-      setInterval(() => {
-        this.nextImg();
-      }, 3000);
-    },
-
-
-
+    // Other methods
+    
+        // manda la foto avanti di 1 ma se al max torno a 0
+        nextImg() {
+          if (this.activeImage === this.slides.length - 1) {
+            this.activeImage = 0;
+          } else {
+            this.activeImage++;
+          }
+        },
+        setImg(index) {
+          this.activeImage = index;
+        },
+    
+        // Funzione per cambiare ogni TOT tempo il carosello
+        startAutoPlay() {
+          setInterval(() => {
+            this.nextImg();
+          }, 3000);
+        },
   },
   created() {
-    // Start del carosello
     this.startAutoPlay();
-
     axios.get('http://127.0.0.1:8000/api/apartments', {
-        params: {
-            orderBySponsorship: true 
-        }
+      params: {
+        orderBySponsorship: true 
+      }
     }).then((response) => {
-        const sponsoredApartments = response.data.results.filter(apartment => apartment.adv_level);
-        const nonSponsoredApartments = response.data.results.filter(apartment => !apartment.adv_level);
-        this.ListaAppartamenti = [...sponsoredApartments, ...nonSponsoredApartments];
-        this.ListaFiltrata = this.ListaAppartamenti;
+      const sponsoredApartments = response.data.results.filter(apartment => apartment.adv_level);
+      const nonSponsoredApartments = response.data.results.filter(apartment => !apartment.adv_level);
+      this.ListaAppartamenti = [...sponsoredApartments, ...nonSponsoredApartments];
+      this.ListaFiltrata = this.ListaAppartamenti;
     });
   },
 }
+
+
 
 </script>
 
@@ -114,10 +159,17 @@ export default {
     </div>
   </div>
 
-  <div class="search-bar">
-    <label for="letti">Numero letti</label>
-    <input type="number" v-model="letti" placeholder="Numero di letti">
-  </div>
+  <div class="barra-ricerca">
+    <input type="text" v-model="citta" placeholder="Inserisci la città">
+    <input type="number" v-model="distanza" placeholder="Distanza massima (km)">
+    <!-- Other input fields -->
+  
+  <label for="letti">Numero letti</label>
+  <input type="number" v-model="letti" placeholder="Numero di letti">
+  <label for="stanze">Numero stanze</label>
+  <input type="number" v-model="stanze" placeholder="Numero di stanze">
+  <button @click="ricerca">Cerca</button>
+</div>
 
   <!-- Contenuto -->
   <div class="container">
@@ -125,14 +177,14 @@ export default {
       <h1 class="col-12 text-center my-5">Segli la casa per il tuo viaggio</h1>
 
       <!-- Barra di ricerca -->
-      <div class="barra-ricerca">
+     <!--  <div class="barra-ricerca">
         <input type="number" v-model="distanza" placeholder="Distanza">
         <div id="searchBoxContainer"></div>
         <input type="number" v-model="camere" placeholder="Numero di camere">
         <input type="number" v-model="letti" placeholder="Numero di letti">
         <button @click="ricerca">Cerca</button>
       </div>
-
+ -->
       <!-- Liste card -->
       <AppCard v-for="card, index in this.ListaFiltrata" :key="index" :card="card" />
 

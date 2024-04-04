@@ -21,34 +21,29 @@ export default {
         this.getApartmentDetails();
     },
     methods: {
-        getApartmentDetails() {
-            axios.get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
-    .then((response) => {
-        this.apartment = response.data.result;
-        console.log("Appartamento:", this.apartment);
-        if(this.apartment && this.apartment.longitude && this.apartment.latitude) {
-            this.loader = true;
-            this.initializeMap();
-        } else {
-            console.error("Dati di longitudine o latitudine mancanti o non validi");
-        }
-    });
-
-        },
-        redirectToMessageForm() {
-            this.$router.push({ name: "MessageForm" });
-        },
-
-        initializeMap() {
+    getApartmentDetails() {
+        axios.get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
+            .then((response) => {
+                this.apartment = response.data.result;
+                console.log("Appartamento:", this.apartment);
+                if (this.apartment && this.apartment.longitude && this.apartment.latitude) {
+                    this.loader = true;
+                    this.initializeMap(); // Call initializeMap here
+                } else {
+                    console.error("Dati di longitudine o latitudine mancanti o non validi");
+                }
+            });
+    },
+    initializeMap() {
     if (!this.map && this.apartment) {
         const longitude = parseFloat(this.apartment.longitude);
         const latitude = parseFloat(this.apartment.latitude);
 
-        // Qui si verifica se le coordinate sono valide
         if (isNaN(longitude) || isNaN(latitude)) {
             console.error("Le coordinate non sono valide:", longitude, latitude);
-            return; // Interrompe l'esecuzione se le coordinate non sono numeri validi
+            return;
         }
+
         this.map = tt.map({
             key: this.apiKey,
             container: this.$refs.map,
@@ -56,34 +51,40 @@ export default {
             zoom: 16
         });
 
-        // Ascolta l'evento "load" della mappa
         this.map.on('load', () => {
-            // La mappa è completamente caricata, ora puoi aggiungere il marker
-            this.marker = new tt.Marker()
-                .setLngLat([longitude, latitude])
-                .addTo(this.map);
-        });
-    
-
-        // Esempio di BoundingBox: definisce i limiti intorno alla posizione con una certa "distanza"
-        // Per semplicità, utilizzo valori fissi per creare il bbox attorno alla posizione dell'appartamento
-        const bboxPadding = 0.01; // Modifica questo valore per espandere o ridurre il bbox
-        const bbox = [
-            longitude - bboxPadding, // Min Longitude (o West)
-            latitude - bboxPadding, // Min Latitude (o South)
-            longitude + bboxPadding, // Max Longitude (o East)
-            latitude + bboxPadding // Max Latitude (o North)
-        ];
-
-        // Imposta i limiti della mappa per adattarla al BoundingBox
-        this.map.fitBounds(bbox, { padding: {top: 10, bottom:10, left: 10, right: 10}});
+    console.log("Map loaded."); // Add this console log
+    console.log(latitude)
+    try {
+        this.marker = new tt.Marker()
+            .setLngLat([longitude, latitude])
+            .addTo(this.map);
+        console.log("Marker added successfully.");
+    } catch (error) {
+        console.error("Error adding marker:", error);
     }
-},
-
-},
+});
 
 
-};
+
+            
+        const bboxPadding = 0.01; // Adjust this value as needed
+        const bbox = [
+            longitude - bboxPadding,  // Min Longitude (o West)
+            latitude - bboxPadding,   // Min Latitude (o South)
+            longitude + bboxPadding,  // Max Longitude (o East)
+            latitude + bboxPadding   // Max Latitude (o North)
+        ];
+       
+
+        this.map.fitBounds(bbox, { padding: {top: 10, bottom: 10, left: 10, right: 10}});
+    }
+}
+
+    }
+}
+
+
+
 </script>
 
 <template>
@@ -134,24 +135,23 @@ export default {
             </div>
             <!-- Check if there are services -->
 
+            <p>Servizi:</p>
+             <div v-if="apartment.services && apartment.services.length > 0">
+                <h3>Services:</h3>
+        
+        
+                <ul class="list-unstyled">
+                    <li v-for="(service, index) in apartment.services" :key="index">
+        
+                        <i :class="service.icon"></i><span class="mx-2">{{ service.name }}</span>
+                    </li>
+                </ul>
+            </div> 
         </div>
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-6">
-                <p>Servizi:</p>
-                <!-- <div v-if="apartment.services && apartment.services.length > 0">
-                    <h3>Services:</h3>
-
-
-                    <ul class="list-unstyled">
-                        <li v-for="(service, index) in apartment.services" :key="index">
-
-                            <i :class="service.icon"></i><span class="mx-2">{{ service.name }}</span>
-                        </li>
-                    </ul>
-                </div> -->
-            </div>
+          
             <div class="col-6 mapx">
                 <p class="fs-3 fw-bold ">Dove sarai</p>
                 <div ref="map" id="map"></div>
