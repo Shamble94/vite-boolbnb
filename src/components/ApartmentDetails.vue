@@ -8,6 +8,10 @@ export default {
 
     data() {
         return {
+            message: '',
+        name: '',
+        email: '',
+        subject: '',
             store,
             apartment: null,
             loader: false,
@@ -21,6 +25,25 @@ export default {
         this.getApartmentDetails();
     },
     methods: {
+    sendMessage() {
+      // Send message data to backend API endpoint
+      axios.post('http://127.0.0.1:8000/api/send-message', {
+        name: this.name,
+        email: this.email,
+        subject: this.subject,
+        message: this.message,
+        apartmentId: this.$route.params.id, // Assuming you have access to the apartment ID through the route
+      })
+      .then(response => {
+        // Handle success, e.g., show success message to user
+        console.log('Message sent successfully');
+        
+      })
+      .catch(error => {
+        // Handle error, e.g., show error message to user
+        console.error('Error sending message:', error);
+      });
+    },
     getApartmentDetails() {
         axios.get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
             .then((response) => {
@@ -109,16 +132,16 @@ export default {
 
                     </div>
                     <div class="col-6 secondary-image">
-                        <img v-if="apartment.image !== '0'" :src="`${store.baseUrl}/storage/${apartment.image}`"
+                        <img v-if="apartment.image !== '1'" :src="`${store.baseUrl}/storage/${apartment.image}`"
                             class="img-fluid" :alt="apartment.description">
 
                     </div>
                     <div class="col-6 secondary-image mt-3">
-                        <img v-if="apartment.image !== '0'" :src="`${store.baseUrl}/storage/${apartment.image}`"
+                        <img v-if="apartment.image !== '2'" :src="`${store.baseUrl}/storage/${apartment.image}`"
                             class="img-fluid" :alt="apartment.description">
                     </div>
                     <div class="col-6 secondary-image mt-3">
-                        <img v-if="apartment.image !== '0'" :src="`${store.baseUrl}/storage/${apartment.image}`"
+                        <img v-if="apartment.image !== '4'" :src="`${store.baseUrl}/storage/${apartment.image}`"
                             class="img-fluid" :alt="apartment.description">
 
                     </div>
@@ -160,11 +183,18 @@ export default {
             </div>
         </div>
     </div>
-    <button class="p-1" @click="redirectToMessageForm">
-        Chiedi informazioni
-    </button>
 
-
+  <form @submit.prevent="sendMessage" class="m-3">
+    <label for="name">Nome</label>
+    <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome"><hr>
+    <label for="email">Email</label>
+    <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email"><hr>
+    <label for="subject">Soggetto</label>
+    <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio"><hr>
+    <label for="message">Messaggio</label>
+    <textarea v-model="message" id="message" placeholder="Scrivi qui il tuo messaggio"></textarea>
+    <button type="submit">Invia Messaggio</button>
+  </form>
 </template>
 
 <style lang="scss" scoped>
