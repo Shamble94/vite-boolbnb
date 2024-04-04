@@ -2,8 +2,6 @@ import { createWebHistory, createRouter } from "vue-router";
 import ApartmentDetails from "./components/ApartmentDetails.vue";
 import AppMain from "./components/AppMain.vue";
 
-
-// import MessageForm from './components/MessageForm.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -16,7 +14,9 @@ const router = createRouter({
             path: "/apartments/:id",
             name: "ApartmentDetails",
             component: ApartmentDetails
-        },
+
+        },  
+
     ]
 });
 
