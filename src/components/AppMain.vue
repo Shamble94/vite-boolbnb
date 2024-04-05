@@ -28,13 +28,13 @@ export default {
 
       /* LA CITTA' CERCATA */
       citta: "",
-
+      selectedServices: [], 
       distanza: null,
       stanze: null,
-
-
+      service : [],
+ 
       /* 20KM DI DISTANZA DALLA RICERCA */
-      distanza: 20,
+      distanza: 0,
       camere: null,
       showNoApartmentsMessage: false,
       letti: null,
@@ -83,26 +83,27 @@ export default {
       throw new Error("No results found for the provided city.");
     }
   },
-
   ricerca() {
     // Reset filtered list
-    this.ListaFiltrata = [];
-
     // Perform input validation
     if (!this.citta.trim()) {
       console.error("City name is required.");
       return;
     }
-
+    
     // Geocode the user's input city to get its coordinates
     this.geocodeCity(this.citta)
-      .then((coordinates) => {
+    .then((coordinates) => {
         // Filter apartments based on user's input city, maximum distance, number of rooms, and number of beds
         this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
           const filtroStanze =
-            this.stanze === null || appartamento.rooms >= this.stanze;
+          this.stanze === null || appartamento.rooms >= this.stanze;
           const filtroLetti =
-            this.letti === null || appartamento.beds >= this.letti;
+          this.letti === null || appartamento.beds >= this.letti;
+          const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
+            
+            return appartamento.services.includes(servizio);
+          })
           const distance = this.calculateDistance(
             coordinates.latitude,
             coordinates.longitude,
@@ -110,31 +111,30 @@ export default {
             appartamento.longitude
           );
           const filtroDistanza =
-            this.distanza === null || distance <= this.distanza;
-          return filtroStanze && filtroLetti && filtroDistanza;
+          this.distanza === null || distance <= this.distanza;
+          return filtroStanze && filtroLetti && filtroDistanza && serviziSelezionatiPresenti;
         });
-
+        
         // Check if no apartments match the filters
         this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
       })
       .catch((error) => {
         console.error("Error geocoding city:", error);
       });
-  },
-
-
-
-
+    },
+     
+    
+    
     calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371; // Radius of the earth in km
       const dLat = this.deg2rad(lat2 - lat1);
       const dLon = this.deg2rad(lon2 - lon1);
       const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(this.deg2rad(lat1)) *
-          Math.cos(this.deg2rad(lat2)) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) *
+      Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const distance = R * c; // Distance in km
       return distance;
@@ -143,22 +143,22 @@ export default {
       return deg * (Math.PI / 180);
     },
     // Other methods
-
-
+    
+    
     handleCityInputFocus() {
       this.isCityInputActive = true;
     },
     handleCityInputBlur() {
       this.isCityInputActive = false;
     },
-
+    
     updateSliderValue(event) {
       this.distanza = event.target.value;
     },
-
-  
-
-
+    
+    
+    
+    
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
@@ -170,17 +170,27 @@ export default {
     setImg(index) {
       this.activeImage = index;
     },
-
+    
     // Funzione per cambiare ogni TOT tempo il carosello
     startAutoPlay() {
       setInterval(() => {
         this.nextImg();
       }, 3000);
     },
+    getServices() {
+      axios.get("http://127.0.0.1:8000/api/service")
+        .then((response) => {
+          this.services = response.data.results;
+          console.log(this.services);
+        })
+        .catch((error) => {
+          console.error("Error fetching services:", error);
+        });
   },
+    },
   created() {
+    this.getServices();
     this.startAutoPlay();
-
     axios
       .get("http://127.0.0.1:8000/api/apartments", {
         params: {
@@ -256,46 +266,7 @@ export default {
       </div>
 
       
-     <!--  <div class="search-elem me-5">
-        <label for="filter-input">Filtri</label>
-        <i
-          name="filter-input"
-          id="filter-input"
-          class="fa-solid fa-sliders"
-        ></i>
-
-        <div class="filter-section" id="filterSection">
-          <div class="number-room d-flex">
-            <span id="label-rooms">Numero stanze</span>
-            <input
-              type="number"
-              name="rooms-number"
-              min="0"
-              id="rooms-input"
-              class="rooms-number-input"
-            />
-          </div>
-          <div class="number-room d-flex">
-            <span id="label-rooms">Numero stanze</span>
-            <input
-              type="number"
-              name="rooms-number"
-              min="0"
-              id="rooms-input"
-              class="rooms-number-input"
-            />
-
-            <input
-              type="number"
-              name="rooms-number"
-              default="0"
-              min="0"
-              id="rooms-input"
-              class="rooms-number-input"
-            />
-          </div>
-        </div>
-      </div> -->
+    
 
       <div class="search-btn" role="button" id="searchBtn" @click="ricerca">
         <svg
@@ -311,44 +282,26 @@ export default {
           />
         </svg>
       </div>
-
       <div class="distance-filter-section" id="rangeSection" :class="{ 'active': isCityInputActive }">
         <span id="title-distance">Raggio di distanza</span>
-        <input type="range" v-model="distanza" min="20" max="100" value="20" class="slider" id="radius-input" @input="updateSliderValue">
+        <input type="range" v-model="distanza" min="0" max="200" value="0" class="slider" id="radius-input" @input="updateSliderValue">
         <span id="slider-value">{{ distanza }} km</span>
       </div>
     </div>
   </div>
+  
 
 
   <!-- Contenuto -->
   <div class="container">
     <div class="row">
-      <!-- <h1 class="col-12 text-center my-5">Segli la casa per il tuo viaggio</h1> -->
-
-      <!-- Barra di ricerca -->
-     <!--  <div class="barra-ricerca">
-        <input type="number" v-model="distanza" placeholder="Distanza">
-        <div id="searchBoxContainer"></div>
-        <input type="number" v-model="camere" placeholder="Numero di camere">
-        <input type="number" v-model="letti" placeholder="Numero di letti">
-        <button @click="ricerca">Cerca</button>
-      </div>
- -->
-
-      <!--      <div class="barra-ricerca">
-        <input type="text" v-model="citta" placeholder="Città" />
-        <input
-          type="number"
-          min="20"
-          max="100"
-          v-model="distanza"
-          placeholder="Distanza"
-        />
-        <div id="searchBoxContainer"></div>
-        <input type="number" v-model="letti" placeholder="Numero di letti" />
-        
-      </div> -->
+      <div v-for="service in services" :key="service.id">
+      <input type="checkbox" :value="service.name" v-model="selectedServices">
+      <label>{{ service.name }}</label>
+    
+  </div>
+  
+    
       <div v-if="showNoApartmentsMessage" class="no-apartments-message text-center">
          Non ci sono appartamenti che rispecchiano i filtri inseriti
       </div>
@@ -430,12 +383,12 @@ input[type="number"] {
   width: 100%;
   display: flex;
   justify-content: center;
-  position: sticky;
+ 
   top: 60px;
   font-size: 20px;
   right: 50%;
   transform: translate(0, -100%);
-  z-index: 999;
+
 }
 
 .search-bar {
