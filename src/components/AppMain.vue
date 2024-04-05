@@ -3,10 +3,6 @@ import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
 
-/* FIXME: NELL'INPUT SE IO INSERISCO LA CITTA' DEVE CERCARE QUESTA IN BASE ALLE COORDINATE. 
-          SE LE COORDINATE SI TROVANO ENTRO UN RAGGIO DI 20KM ALLORA E' CORRETTO.
-*/
-
 export default {
   name: "AppMain", // Cambiato nome per evitare confusione
   components: {
@@ -57,7 +53,6 @@ export default {
   methods: {
   async geocodeCity(city) {
     try {
-      // Perform geocoding logic here
       const coordinates = await this.performGeocoding(city);
       return coordinates;
     } catch (error) {
@@ -66,8 +61,7 @@ export default {
   },
 
   async performGeocoding(city) {
-    // Your geocoding logic using an external API (e.g., TomTom)
-    // Example:
+
     const apiKey = "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo";
     const encodedCity = encodeURIComponent(city);
     const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
@@ -84,52 +78,45 @@ export default {
     }
   },
   ricerca() {
-    // Reset filtered list
-    // Perform input validation
-    if (!this.citta.trim()) {
-      console.error("City name is required.");
-      return;
-    }
-    
-    // Geocode the user's input city to get its coordinates
-    this.geocodeCity(this.citta)
+  this.ListaFiltrata = [];
+
+  if (!this.citta.trim()) {
+    console.error("City name is required.");
+    this.ListaFiltrata = this.ListaAppartamenti;
+    return;
+  }
+  
+  this.geocodeCity(this.citta)
     .then((coordinates) => {
-        // Filter apartments based on user's input city, maximum distance, number of rooms, and number of beds
-        this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
-          const filtroStanze =
-          this.stanze === null || appartamento.rooms >= this.stanze;
-          const filtroLetti =
-          this.letti === null || appartamento.beds >= this.letti;
+      this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
+        const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
+        const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
 
-          const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
-              return appartamento.services.some(apartmentService => apartmentService.name === servizio);
-          });
-
-          const distance = this.calculateDistance(
-            coordinates.latitude,
-            coordinates.longitude,
-            appartamento.latitude,
-            appartamento.longitude
-          );
-          const filtroDistanza =
-          this.distanza === null || distance <= this.distanza;
-          return filtroStanze && filtroLetti && filtroDistanza && serviziSelezionatiPresenti;
+        const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
+          return appartamento.services.some(apartmentService => apartmentService.name === servizio);
         });
-        
-        // Check if no apartments match the filters
-        this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
-      })
-      .catch((error) => {
-        console.error("Error geocoding city:", error);
-      });
 
+        const distance = this.calculateDistance(
+          coordinates.latitude,
+          coordinates.longitude,
+          appartamento.latitude,
+          appartamento.longitude
+        );
+        const filtroDistanza = this.distanza === null || distance <= this.distanza;
+        return filtroStanze && filtroLetti && filtroDistanza && serviziSelezionatiPresenti;
+      });
       
-    },
+      this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
+    })
+    .catch((error) => {
+      console.error("Error geocoding city:", error);
+    });
+},
      
     
     
     calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Radius of the earth in km
+      const R = 6371; 
       const dLat = this.deg2rad(lat2 - lat1);
       const dLon = this.deg2rad(lon2 - lon1);
       const a =
@@ -139,13 +126,13 @@ export default {
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = R * c; // Distance in km
+      const distance = R * c; 
       return distance;
     },
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
-    // Other methods
+    
     
     
     handleCityInputFocus() {
