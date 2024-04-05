@@ -100,10 +100,11 @@ export default {
           this.stanze === null || appartamento.rooms >= this.stanze;
           const filtroLetti =
           this.letti === null || appartamento.beds >= this.letti;
+
           const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
-            
-            return appartamento.services.includes(servizio);
-          })
+              return appartamento.services.some(apartmentService => apartmentService.name === servizio);
+          });
+
           const distance = this.calculateDistance(
             coordinates.latitude,
             coordinates.longitude,
@@ -121,6 +122,8 @@ export default {
       .catch((error) => {
         console.error("Error geocoding city:", error);
       });
+
+      
     },
      
     
@@ -155,9 +158,6 @@ export default {
     updateSliderValue(event) {
       this.distanza = event.target.value;
     },
-    
-    
-    
     
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
