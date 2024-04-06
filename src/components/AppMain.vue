@@ -2,11 +2,17 @@
 import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
+import AppHeader from "./AppHeader.vue";
+
+/* FIXME: NELL'INPUT SE IO INSERISCO LA CITTA' DEVE CERCARE QUESTA IN BASE ALLE COORDINATE. 
+          SE LE COORDINATE SI TROVANO ENTRO UN RAGGIO DI 20KM ALLORA E' CORRETTO.
+*/
 
 export default {
   name: "AppMain", // Cambiato nome per evitare confusione
   components: {
     AppCard,
+    AppHeader
   },
 
   data() {
@@ -77,16 +83,17 @@ export default {
       throw new Error("No results found for the provided city.");
     }
   },
-  ricerca() {
+  ricerca(location) {
+    console.log('ciao')
   this.ListaFiltrata = [];
 
-  if (!this.citta.trim()) {
+  if (!location.trim()) {
     console.error("City name is required.");
     this.ListaFiltrata = this.ListaAppartamenti;
     return;
   }
-  
-  this.geocodeCity(this.citta)
+
+  this.geocodeCity(location)
     .then((coordinates) => {
       this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
         const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
@@ -202,6 +209,7 @@ export default {
 </script>
 
 <template>
+    <AppHeader @search-city="ricerca" />
   <div class="relative">
     <div class="carousel">
       <img
