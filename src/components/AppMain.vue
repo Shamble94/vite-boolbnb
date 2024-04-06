@@ -231,11 +231,13 @@ export default {
     </div>
   </div>
   
-  <div class="filter-window-button" @click="toggleFilters">
-    <i class="fas fa-filter"></i>
-  </div>
+  <div class="filter-row">
+    <div class="filter-window-button" @click="toggleFilters">
+      <i class="fas fa-filter"></i>
+    </div>
 
-  <div v-if="isFilterSectionVisible" class="filters-section p-4">
+
+    <div v-if="isFilterSectionVisible" class="filters-section p-4">
     <div class="filter-header">
       <h5 class="fw-bolder m-0">Filtra i risultati</h5>
       <i class="fa-solid fa-xmark" @click="toggleFilters"></i>
@@ -296,6 +298,11 @@ export default {
 
       
   </div>
+  </div>
+
+  
+
+  
 
 
   <!-- Contenuto -->
@@ -319,6 +326,15 @@ export default {
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
+
+.filter-row{
+  width: 100%;
+  height: 100px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .filter-header{
   display: flex;
   align-items: center;
@@ -336,9 +352,8 @@ export default {
   height: 50px;
   background-color: rgb(255, 255, 255);
   position: absolute;
-  right: 25px;
+  right: 100px;
   border-radius: 100px;
-  margin-top: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -356,14 +371,14 @@ export default {
 }
 
 .filters-section{
-  width: 330px; /* Larghezza desiderata */
-  position: absolute; /* Posizionamento assoluto rispetto all'elemento padre con posizione relativa */
-  top: 720px; /* Allinea l'elemento all'inizio dell'elemento padre */
-  right: 20px; /* Allinea l'elemento alla destra dell'elemento padre */
+  width: 330px; 
+  position: absolute;
+  right: 100px; 
   z-index: 9999;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   border: solid 1px rgb(231, 231, 231);
+  top: 25%;
 
   .distance-section{
     margin-bottom: 10px;
@@ -386,7 +401,7 @@ export default {
 }
 
 .container {
-  padding: 100px 0;
+  padding: 0px 0;
 }
 .relative {
   position: relative;
