@@ -2,11 +2,17 @@
 import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
+import AppHeader from "./AppHeader.vue";
+
+/* FIXME: NELL'INPUT SE IO INSERISCO LA CITTA' DEVE CERCARE QUESTA IN BASE ALLE COORDINATE. 
+          SE LE COORDINATE SI TROVANO ENTRO UN RAGGIO DI 20KM ALLORA E' CORRETTO.
+*/
 
 export default {
   name: "AppMain", // Cambiato nome per evitare confusione
   components: {
     AppCard,
+    AppHeader
   },
 
   data() {
@@ -30,7 +36,7 @@ export default {
       service : [],
  
       /* 20KM DI DISTANZA DALLA RICERCA */
-      distanza: 0,
+      distanza: 1,
       camere: null,
       showNoApartmentsMessage: false,
       letti: null,
@@ -77,16 +83,17 @@ export default {
       throw new Error("No results found for the provided city.");
     }
   },
-  ricerca() {
+  ricerca(location) {
+    
   this.ListaFiltrata = [];
 
-  if (!this.citta.trim()) {
+  if (!location.trim()) {
     console.error("City name is required.");
     this.ListaFiltrata = this.ListaAppartamenti;
     return;
   }
-  
-  this.geocodeCity(this.citta)
+
+  this.geocodeCity(location)
     .then((coordinates) => {
       this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
         const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
@@ -202,6 +209,7 @@ export default {
 </script>
 
 <template>
+    <AppHeader @search-city="ricerca" />
   <div class="relative">
     <div class="carousel">
       <img
@@ -271,7 +279,7 @@ export default {
       </div>
       <div class="distance-filter-section" id="rangeSection" :class="{ 'active': isCityInputActive }">
         <span id="title-distance">Raggio di distanza</span>
-        <input type="range" v-model="distanza" min="0" max="200" value="0" class="slider" id="radius-input" @input="updateSliderValue">
+        <input type="range" v-model="distanza" min="1" max="10" value="1" class="slider" id="radius-input" @input="updateSliderValue">
         <span id="slider-value">{{ distanza }} km</span>
       </div>
     </div>
