@@ -306,7 +306,7 @@ export default {
 
 
   <!-- Contenuto -->
-  <div class="container">
+  <div class="container-fluid p-5">
     <div class="row">
       
   
