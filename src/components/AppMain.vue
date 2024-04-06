@@ -84,7 +84,6 @@ export default {
     }
   },
   ricerca(location) {
-    console.log('ciao')
   this.ListaFiltrata = [];
 
   if (!location.trim()) {
