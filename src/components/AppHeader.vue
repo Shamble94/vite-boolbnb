@@ -15,6 +15,8 @@ export default {
       
       /* FINESTRA DELLA SEZIONE FILTRI SU SCHERMO  */
       showFilterSection: false,
+
+      
     };
   },
   methods: {

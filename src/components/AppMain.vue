@@ -36,7 +36,7 @@ export default {
       service : [],
  
       /* 20KM DI DISTANZA DALLA RICERCA */
-      distanza: 0,
+      distanza: 1,
       camere: null,
       showNoApartmentsMessage: false,
       letti: null,
@@ -84,6 +84,7 @@ export default {
     }
   },
   ricerca(location) {
+    
   this.ListaFiltrata = [];
 
   if (!location.trim()) {
@@ -278,7 +279,7 @@ export default {
       </div>
       <div class="distance-filter-section" id="rangeSection" :class="{ 'active': isCityInputActive }">
         <span id="title-distance">Raggio di distanza</span>
-        <input type="range" v-model="distanza" min="0" max="200" value="0" class="slider" id="radius-input" @input="updateSliderValue">
+        <input type="range" v-model="distanza" min="1" max="10" value="1" class="slider" id="radius-input" @input="updateSliderValue">
         <span id="slider-value">{{ distanza }} km</span>
       </div>
     </div>
