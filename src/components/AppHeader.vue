@@ -174,7 +174,7 @@ export default {
 
             <!-- SEZIONE FILTRI -->
             <div class="filter-section" v-show="showFilterSection" ref="filterSection">
-              <!-- TODO: AGGIUNGERE CONTENUTO -->
+              
             </div>
           </div>
         </div>
@@ -198,7 +198,7 @@ header {
   .filter-section{
     width: 350px;
     height: 500px;
-    background-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0);
     position: absolute;
     top: 60px;
     z-index: 1000;

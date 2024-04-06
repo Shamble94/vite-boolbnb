@@ -19,6 +19,8 @@ export default {
     return {
       store,
 
+      isFilterSectionVisible: false,
+
       isCityInputActive: false,
 
 
@@ -57,6 +59,10 @@ export default {
   },
 
   methods: {
+    toggleFilters() {
+    this.isFilterSectionVisible = !this.isFilterSectionVisible;
+  },
+
   async geocodeCity(city) {
     try {
       const coordinates = await this.performGeocoding(city);
@@ -224,23 +230,33 @@ export default {
       />
     </div>
   </div>
+  
+  <div class="filter-window-button" @click="toggleFilters">
+    <i class="fas fa-filter"></i>
+  </div>
 
-  <div class="searchbar-size">
-    <div class="search-bar">
-      <div class="search-elem">
-        <label for="city-input">Dove</label>
-        <input
-  type="text"
-  v-model="citta"
-  placeholder="Cerca le destinazioni"
-  name="city"
-  @focus="handleCityInputFocus"
-  @blur="handleCityInputBlur"
-/>
+  <div v-if="isFilterSectionVisible" class="filters-section p-4">
+    <div class="filter-header">
+      <h5 class="fw-bolder m-0">Filtra i risultati</h5>
+      <i class="fa-solid fa-xmark" @click="toggleFilters"></i>
+    </div>
+    
+    
+    <hr>
+
+    <div class="distance-section">
+      <div class="section-name">Distanza</div>
+
+      <div class="range-infos">
+        <input type="range" v-model="distanza" min="1" max="200" value="1" class="slider" id="radius-input" @input="updateSliderValue">
+        <span id="slider-value" class="fw-bolder fs-5">{{ distanza }} km</span>
       </div>
+    </div>
 
-      <div class="search-elem">
-        <label for="beds-input">Quanti letti</label>
+    <div class="distance-section">
+      <label for="beds-input" class="section-name">Letti</label>
+
+      <div class="range-infos">
         <input
           type="text"
           name="beds-input"
@@ -249,52 +265,43 @@ export default {
           placeholder="Inserisci il numero di letti"
         />
       </div>
-      <div class="search-elem">
-        <label for="beds-input">Quante stanze</label>
+    </div>
+
+    <div class="distance-section">
+      <label for="stanze-input" class="section-name">Stanze</label>
+
+      <div class="range-infos">
         <input
           type="text"
-          name="beds-input"
+          name="stanze-input"
           v-model="stanze"
-          id="beds-input"
+          id="stanze-input"
           placeholder="Inserisci il numero di stanze"
         />
       </div>
+    </div>
 
-      
-    
+    <div class="distance-section">
+      <label class="section-name">Servizi</label>
 
-      <div class="search-btn" role="button" id="searchBtn" @click="ricerca">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="25"
-          height="25"
-          fill="#fff"
-          class="bi bi-search"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-          />
-        </svg>
-      </div>
-      <div class="distance-filter-section" id="rangeSection" :class="{ 'active': isCityInputActive }">
-        <span id="title-distance">Raggio di distanza</span>
-        <input type="range" v-model="distanza" min="1" max="10" value="1" class="slider" id="radius-input" @input="updateSliderValue">
-        <span id="slider-value">{{ distanza }} km</span>
+      <div class="services-checkbox">
+        <div v-for="service in services" :key="service.id">
+          <input type="checkbox" class="largerCheckbox" :value="service.name" v-model="selectedServices">
+          <label class="label-checkbox">{{ service.name }}</label>
+        </div>
       </div>
     </div>
+
+    
+
+      
   </div>
-  
 
 
   <!-- Contenuto -->
   <div class="container">
     <div class="row">
-      <div v-for="service in services" :key="service.id">
-      <input type="checkbox" :value="service.name" v-model="selectedServices">
-      <label>{{ service.name }}</label>
-    
-  </div>
+      
   
     
       <div v-if="showNoApartmentsMessage" class="no-apartments-message text-center">
@@ -312,6 +319,61 @@ export default {
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
+.filter-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  i{
+    font-size: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}
+
+.filter-window-button{
+  width: 50px;
+  height: 50px;
+  background-color: rgb(255, 255, 255);
+  position: absolute;
+  right: 25px;
+  border-radius: 100px;
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(61, 123, 255);
+  cursor: pointer;
+}
+
+.label-checkbox{
+  margin-left: 10px;
+  font-weight: 700
+}
+
+.services-checkbox{
+  margin-top: 10px;
+}
+
+.filters-section{
+  width: 330px; /* Larghezza desiderata */
+  position: absolute; /* Posizionamento assoluto rispetto all'elemento padre con posizione relativa */
+  top: 720px; /* Allinea l'elemento all'inizio dell'elemento padre */
+  right: 20px; /* Allinea l'elemento alla destra dell'elemento padre */
+  z-index: 9999;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  border: solid 1px rgb(231, 231, 231);
+
+  .distance-section{
+    margin-bottom: 10px;
+  }
+
+  .range-infos{
+    display: flex;
+    align-items: center;
+  }
+}
 
 .distance-filter-section {
   /* Stili di base */
@@ -354,14 +416,19 @@ export default {
   margin: 20px;
 }
 
+input[type="checkbox"]{
+  widows: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
 input[type="text"],
 input[type="number"] {
   padding: 10px;
-  margin: 0 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
-  width: 200px;
+  width: 100%;
 }
 
 .fa-sliders {
@@ -450,6 +517,12 @@ input[type="number"] {
   font-size: 20px;
 }
 
+input.largerCheckbox {
+            width: 20px;
+            height: 20px;
+        }
+
+
 .filter-section {
   width: 25%;
   height: 70px;
@@ -480,9 +553,9 @@ input[type="number"] {
 }
 
 .slider {
-  width: 60%;
-  margin: 0 25px;
+  width: 65%;
   cursor: grab;
+  margin-right: 20px;
 }
 
 </style>
