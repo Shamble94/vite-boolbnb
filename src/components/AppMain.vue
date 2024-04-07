@@ -365,7 +365,7 @@ export default {
       </div>
       <!-- Liste card -->
       <AppCard
-        v-for="(card, index) in this.ListaFiltrata"
+        v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
         :key="index"
         :card="card"
       />
