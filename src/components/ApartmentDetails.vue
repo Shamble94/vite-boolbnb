@@ -45,7 +45,7 @@ export default {
             // Faccio la chiamata passando i dati
             axios.post(`http://127.0.0.1:8000/api/message`, data).then((response) => {
 
-                if (response.data.succes) {
+                if (response.data.success) {
                     this.name = '';
                     this.email = '';
                     this.subject = "";

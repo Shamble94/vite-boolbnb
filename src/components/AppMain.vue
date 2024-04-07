@@ -60,6 +60,13 @@ export default {
   },
 
   methods: {
+    handleCardClick(card) {
+    axios.post(`http://127.0.0.1:8000/api/apartments/${card.id}/clicks`)
+      .then(response => {
+
+      });
+  },
+
     toggleFilters() {
       this.isFilterSectionVisible = !this.isFilterSectionVisible;
     },
@@ -348,6 +355,7 @@ export default {
           v-for="(card, index) in ListaAppartamentiPivot"
           :key="'pivot_' + index"
           :card="card"
+          @click="handleCardClick(card)"
         />
         </div>
       </div>
