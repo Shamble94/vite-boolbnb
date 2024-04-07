@@ -97,10 +97,18 @@ export default {
       }
     },
     ricerca(location) {
+
       this.citta = location;
       this.ListaFiltrata = [];
 
-      if (!location.trim()) {
+
+      if (this.citta.length == 0 || this.citta == '' || this.citta == 'gg') {
+        console.log('c');
+        this.ListaFiltrata = this.ListaAppartamenti;
+        return;
+      } 
+
+        if (!location.trim()) {
         console.error("City name is required.");
         this.ListaFiltrata = this.ListaAppartamenti;
         return;
@@ -143,6 +151,8 @@ export default {
         .catch((error) => {
           console.error("Error geocoding city:", error);
         });
+
+      
     },
 
     calculateDistance(lat1, lon1, lat2, lon2) {

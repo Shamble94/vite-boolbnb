@@ -60,11 +60,20 @@ export default {
 
     /* PASSA IL VALORE DELLA CITTA' CERCATA NEL MAIN */
     async selectCity(city) {
-      this.$emit("select-city", city);
+
+        this.$emit("select-city", city);
+
+
     },
 
     /* FUNZIONE DELLA RICERCA CON INVIO DA TASTIERA*/
     async search() {
+
+      if (this.cityInput === '' || this.cityInput.length == 0) {
+        this.$emit("search-city", this.cityInput);
+        return;
+      }
+
 
       /* CHIAMATA AXIOS PER LA CITTA' CERCATA*/
       const response = await axios.get(`https://api.tomtom.com/search/2/search/${this.cityInput}.json?key=GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo`);
