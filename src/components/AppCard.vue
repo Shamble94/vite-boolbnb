@@ -30,7 +30,7 @@ export default {
         </div>
 
         <div class="apartments-infos">
-          <h5 class="card-title text-truncate">{{ card.location }}</h5>
+          <h5 class="card-title text-truncate">{{ card.address }}</h5>
           <span>{{ card.rooms }} Stanze</span>
           <span>{{ card.beds }} Letti</span>
         </div>
