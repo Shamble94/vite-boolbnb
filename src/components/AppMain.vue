@@ -12,7 +12,7 @@ export default {
   name: "AppMain", // Cambiato nome per evitare confusione
   components: {
     AppCard,
-    AppHeader
+    AppHeader,
   },
 
   data() {
@@ -23,6 +23,7 @@ export default {
 
       isCityInputActive: false,
 
+      ListaAppartamentiPivot: [],
 
       /* LISTA DEGLI APPARTAMENTI IN UN ARRAY */
       ListaAppartamenti: [],
@@ -32,11 +33,11 @@ export default {
 
       /* LA CITTA' CERCATA */
       citta: "",
-      selectedServices: [], 
+      selectedServices: [],
       distanza: null,
       stanze: null,
-      service : [],
- 
+      service: [],
+
       /* 20KM DI DISTANZA DALLA RICERCA */
       distanza: 1,
       camere: null,
@@ -60,105 +61,111 @@ export default {
 
   methods: {
     toggleFilters() {
-    this.isFilterSectionVisible = !this.isFilterSectionVisible;
-  },
+      this.isFilterSectionVisible = !this.isFilterSectionVisible;
+    },
 
-  async geocodeCity(city) {
-    try {
-      const coordinates = await this.performGeocoding(city);
-      return coordinates;
-    } catch (error) {
-      throw new Error("Geocoding failed: " + error.message);
-    }
-  },
+    async geocodeCity(city) {
+      try {
+        const coordinates = await this.performGeocoding(city);
+        return coordinates;
+      } catch (error) {
+        throw new Error("Geocoding failed: " + error.message);
+      }
+    },
 
-  async performGeocoding(city) {
+    async performGeocoding(city) {
+      const apiKey = "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo";
+      const encodedCity = encodeURIComponent(city);
+      const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
 
-    const apiKey = "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo";
-    const encodedCity = encodeURIComponent(city);
-    const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
+      const response = await axios.get(apiUrl);
+      const data = response.data;
 
-    const response = await axios.get(apiUrl);
-    const data = response.data;
+      if (data && data.results && data.results.length > 0) {
+        const lat = data.results[0].position.lat;
+        const lng = data.results[0].position.lon;
+        return { latitude: lat, longitude: lng };
+      } else {
+        throw new Error("No results found for the provided city.");
+      }
+    },
+    ricerca(location) {
+      this.ListaFiltrata = [];
 
-    if (data && data.results && data.results.length > 0) {
-      const lat = data.results[0].position.lat;
-      const lng = data.results[0].position.lon;
-      return { latitude: lat, longitude: lng };
-    } else {
-      throw new Error("No results found for the provided city.");
-    }
-  },
-  ricerca(location) {
-    
-  this.ListaFiltrata = [];
+      if (!location.trim()) {
+        console.error("City name is required.");
+        this.ListaFiltrata = this.ListaAppartamenti;
+        return;
+      }
 
-  if (!location.trim()) {
-    console.error("City name is required.");
-    this.ListaFiltrata = this.ListaAppartamenti;
-    return;
-  }
+      this.geocodeCity(location)
+        .then((coordinates) => {
+          this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
+            const filtroStanze =
+              this.stanze === null || appartamento.rooms >= this.stanze;
+            const filtroLetti =
+              this.letti === null || appartamento.beds >= this.letti;
 
-  this.geocodeCity(location)
-    .then((coordinates) => {
-      this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
-        const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
-        const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
+            const serviziSelezionatiPresenti = this.selectedServices.every(
+              (servizio) => {
+                return appartamento.services.some(
+                  (apartmentService) => apartmentService.name === servizio
+                );
+              }
+            );
 
-        const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
-          return appartamento.services.some(apartmentService => apartmentService.name === servizio);
+            const distance = this.calculateDistance(
+              coordinates.latitude,
+              coordinates.longitude,
+              appartamento.latitude,
+              appartamento.longitude
+            );
+            const filtroDistanza =
+              this.distanza === null || distance <= this.distanza;
+            return (
+              filtroStanze &&
+              filtroLetti &&
+              filtroDistanza &&
+              serviziSelezionatiPresenti
+            );
+          });
+
+          this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
+        })
+        .catch((error) => {
+          console.error("Error geocoding city:", error);
         });
+    },
 
-        const distance = this.calculateDistance(
-          coordinates.latitude,
-          coordinates.longitude,
-          appartamento.latitude,
-          appartamento.longitude
-        );
-        const filtroDistanza = this.distanza === null || distance <= this.distanza;
-        return filtroStanze && filtroLetti && filtroDistanza && serviziSelezionatiPresenti;
-      });
-      
-      this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
-    })
-    .catch((error) => {
-      console.error("Error geocoding city:", error);
-    });
-},
-     
-    
-    
     calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371; 
+      const R = 6371;
       const dLat = this.deg2rad(lat2 - lat1);
       const dLon = this.deg2rad(lon2 - lon1);
       const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.deg2rad(lat1)) *
-      Math.cos(this.deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(this.deg2rad(lat1)) *
+          Math.cos(this.deg2rad(lat2)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = R * c; 
+      const distance = R * c;
       return distance;
     },
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
-    
-    
-    
+
     handleCityInputFocus() {
       this.isCityInputActive = true;
     },
     handleCityInputBlur() {
       this.isCityInputActive = false;
     },
-    
+
     updateSliderValue(event) {
       this.distanza = event.target.value;
     },
-    
+
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
@@ -170,7 +177,7 @@ export default {
     setImg(index) {
       this.activeImage = index;
     },
-    
+
     // Funzione per cambiare ogni TOT tempo il carosello
     startAutoPlay() {
       setInterval(() => {
@@ -178,7 +185,8 @@ export default {
       }, 3000);
     },
     getServices() {
-      axios.get("http://127.0.0.1:8000/api/service")
+      axios
+        .get("http://127.0.0.1:8000/api/service")
         .then((response) => {
           this.services = response.data.results;
           console.log(this.services);
@@ -186,11 +194,24 @@ export default {
         .catch((error) => {
           console.error("Error fetching services:", error);
         });
-  },
     },
+  },
   created() {
     this.getServices();
     this.startAutoPlay();
+    axios
+      .get("http://127.0.0.1:8000/api/pivot-apartments")
+      .then((response) => {
+        // Assegna i risultati ottenuti dalla chiamata API alla variabile ListaAppartamenti
+        this.ListaAppartamentiPivot = response.data.results;
+        console.log(this.ListaAppartamentiPivot); // Spostato il console log qui
+        // Assegna anche i risultati filtrati alla variabile ListaFiltrata per mostrare tutti gli appartamenti all'inizio
+        this.ListaFiltrata = this.ListaAppartamenti;
+      })
+      .catch((error) => {
+        console.error("Error fetching pivot apartments:", error);
+      });
+
     axios
       .get("http://127.0.0.1:8000/api/apartments", {
         params: {
@@ -215,7 +236,7 @@ export default {
 </script>
 
 <template>
-    <AppHeader @search-city="ricerca" />
+  <AppHeader @search-city="ricerca" />
   <div class="relative">
     <div class="carousel">
       <img
@@ -230,89 +251,117 @@ export default {
       />
     </div>
   </div>
-  
+
   <div class="filter-row">
     <div class="filter-window-button" @click="toggleFilters">
       <i class="fas fa-filter"></i>
     </div>
 
-
     <div v-if="isFilterSectionVisible" class="filters-section p-4">
-    <div class="filter-header">
-      <h5 class="fw-bolder m-0">Filtra i risultati</h5>
-      <i class="fa-solid fa-xmark" @click="toggleFilters"></i>
-    </div>
-    
-    
-    <hr>
-
-    <div class="distance-section">
-      <div class="section-name">Distanza</div>
-
-      <div class="range-infos">
-        <input type="range" v-model="distanza" min="1" max="200" value="1" class="slider" id="radius-input" @input="updateSliderValue">
-        <span id="slider-value" class="fw-bolder fs-5">{{ distanza }} km</span>
+      <div class="filter-header">
+        <h5 class="fw-bolder m-0">Filtra i risultati</h5>
+        <i class="fa-solid fa-xmark" @click="toggleFilters"></i>
       </div>
-    </div>
 
-    <div class="distance-section">
-      <label for="beds-input" class="section-name">Letti</label>
+      <hr />
 
-      <div class="range-infos">
-        <input
-          type="text"
-          name="beds-input"
-          v-model="letti"
-          id="beds-input"
-          placeholder="Inserisci il numero di letti"
-        />
+      <div class="distance-section">
+        <div class="section-name">Distanza</div>
+
+        <div class="range-infos">
+          <input
+            type="range"
+            v-model="distanza"
+            min="1"
+            max="200"
+            value="1"
+            class="slider"
+            id="radius-input"
+            @input="updateSliderValue"
+          />
+          <span id="slider-value" class="fw-bolder fs-5"
+            >{{ distanza }} km</span
+          >
+        </div>
       </div>
-    </div>
 
-    <div class="distance-section">
-      <label for="stanze-input" class="section-name">Stanze</label>
+      <div class="distance-section">
+        <label for="beds-input" class="section-name">Letti</label>
 
-      <div class="range-infos">
-        <input
-          type="text"
-          name="stanze-input"
-          v-model="stanze"
-          id="stanze-input"
-          placeholder="Inserisci il numero di stanze"
-        />
+        <div class="range-infos">
+          <input
+            type="text"
+            name="beds-input"
+            v-model="letti"
+            id="beds-input"
+            placeholder="Inserisci il numero di letti"
+          />
+        </div>
       </div>
-    </div>
 
-    <div class="distance-section">
-      <label class="section-name">Servizi</label>
+      <div class="distance-section">
+        <label for="stanze-input" class="section-name">Stanze</label>
 
-      <div class="services-checkbox">
-        <div v-for="service in services" :key="service.id">
-          <input type="checkbox" class="largerCheckbox" :value="service.name" v-model="selectedServices">
-          <label class="label-checkbox">{{ service.name }}</label>
+        <div class="range-infos">
+          <input
+            type="text"
+            name="stanze-input"
+            v-model="stanze"
+            id="stanze-input"
+            placeholder="Inserisci il numero di stanze"
+          />
+        </div>
+      </div>
+
+      <div class="distance-section">
+        <label class="section-name">Servizi</label>
+
+        <div class="services-checkbox">
+          <div v-for="service in services" :key="service.id">
+            <input
+              type="checkbox"
+              class="largerCheckbox"
+              :value="service.name"
+              v-model="selectedServices"
+            />
+            <label class="label-checkbox">{{ service.name }}</label>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    
-
+  <div class="container-fluid p-5">
+    <div class="row">
       
+      <h2 class="apartment-sponsored-title">APPARTAMENTI PIU' RILEVANTI</h2>
+      <div class="sponsored-section">
+        <div
+          v-if="showNoApartmentsMessage"
+          class="no-apartments-message text-center"
+        >
+          Non ci sono appartamenti che rispecchiano i filtri inseriti
+        </div>
+        <!-- Liste card -->
+        <div class="card-div">
+          <AppCard class="mx-2"
+          v-for="(card, index) in ListaAppartamentiPivot"
+          :key="'pivot_' + index"
+          :card="card"
+        />
+        </div>
+      </div>
+    </div>
   </div>
-  </div>
-
-  
-
-  
-
 
   <!-- Contenuto -->
   <div class="container-fluid p-5">
     <div class="row">
-      
-  
-    
-      <div v-if="showNoApartmentsMessage" class="no-apartments-message text-center">
-         Non ci sono appartamenti che rispecchiano i filtri inseriti
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
+        Non ci sono appartamenti che rispecchiano i filtri inseriti
       </div>
       <!-- Liste card -->
       <AppCard
@@ -327,7 +376,7 @@ export default {
 <style lang="scss" scoped>
 @use "../style/general.scss";
 
-.filter-row{
+.filter-row {
   width: 100%;
   height: 100px;
   position: relative;
@@ -335,19 +384,19 @@ export default {
   align-items: center;
 }
 
-.filter-header{
+.filter-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  i{
+  i {
     font-size: 20px;
     margin-right: 10px;
     cursor: pointer;
   }
 }
 
-.filter-window-button{
+.filter-window-button {
   width: 50px;
   height: 50px;
   background-color: rgb(255, 255, 255);
@@ -361,30 +410,30 @@ export default {
   cursor: pointer;
 }
 
-.label-checkbox{
+.label-checkbox {
   margin-left: 10px;
-  font-weight: 700
+  font-weight: 700;
 }
 
-.services-checkbox{
+.services-checkbox {
   margin-top: 10px;
 }
 
-.filters-section{
-  width: 330px; 
+.filters-section {
+  width: 330px;
   position: absolute;
-  right: 100px; 
+  right: 100px;
   z-index: 9999;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   border: solid 1px rgb(231, 231, 231);
   top: 25%;
 
-  .distance-section{
+  .distance-section {
     margin-bottom: 10px;
   }
 
-  .range-infos{
+  .range-infos {
     display: flex;
     align-items: center;
   }
@@ -431,7 +480,7 @@ export default {
   margin: 20px;
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
   widows: 100px;
   height: 100px;
   margin-bottom: 10px;
@@ -460,12 +509,11 @@ input[type="number"] {
   width: 100%;
   display: flex;
   justify-content: center;
- 
+
   top: 60px;
   font-size: 20px;
   right: 50%;
   transform: translate(0, -100%);
-
 }
 
 .search-bar {
@@ -533,10 +581,9 @@ input[type="number"] {
 }
 
 input.largerCheckbox {
-            width: 20px;
-            height: 20px;
-        }
-
+  width: 20px;
+  height: 20px;
+}
 
 .filter-section {
   width: 25%;
@@ -573,4 +620,26 @@ input.largerCheckbox {
   margin-right: 20px;
 }
 
+.sponsored-section{
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  padding: 0 30px;
+  overflow-x: scroll;
+  -webkit-box-shadow: 0px 0px 14px 0px #00000026;
+  -moz-box-shadow: 0px 0px 14px 0px #00000026;
+  -o-box-shadow: 0px 0px 14px 0px #00000026;
+  box-shadow: 0px 0px 14px 0px #00000026;
+
+  .card-div{
+    width: 100%;
+    display: flex;
+    margin-right: 20px;
+  }
+}
+
+.apartment-sponsored-title{
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px
+}
 </style>
