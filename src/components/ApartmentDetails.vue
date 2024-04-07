@@ -28,38 +28,38 @@ export default {
     },
  
     methods: {
-        sendMessage() {
-           
+        // Modifica il metodo sendMessage() per gestire correttamente la risposta del backend
+sendMessage() {
+  // Definisco i dati che verranno passati al BE
+  const data = {
+    apartment_id: this.apartment.id,
+    name: this.name,
+    email: this.email,
+    subject: this.subject,
+    message: this.message,
+  };
 
-            // Definisco i dati che verranno passati al BE
-            const data = {
-                apartment_id: this.apartment.id,
-                name: this.name,
-                email: this.email,
-                subject: this.subject,
-                message: this.message,
-                date: new Date().toISOString().substring(0, 10),
-                
-            }
 
-            // Faccio la chiamata passando i dati
-            axios.post(`http://127.0.0.1:8000/api/message`, data).then((response) => {
 
-                if (response.data.success) {
-                    this.name = '';
-                    this.email = '';
-                    this.subject = "";
-                    this.message = '';
-                  
+  // Faccio la chiamata passando i dati
+  axios.post(`http://127.0.0.1:8000/api/message`, data).then((response) => {
+    if (response.data.success) {
+      console.log('gg')
+        this.name = '';
+        this.email = '';
+        this.subject = "";
+        this.message = '';
+        alert("Messaggio inviato con successo");
 
-                    alert("Messaggio inviato con successo")
-                    this.$router.push('/'); // Adjust the route as needed
-                } else {
-                    this.errors = response.data.errors
-                }
+    } else {
+        this.errors = response.data.errors;
+    }
+})
+    .catch((error) => {
+      console.error("Errore durante l'invio del messaggio:", error);
+    });
+},
 
-            })
-        },
         
 
     getApartmentDetails() {
@@ -246,19 +246,35 @@ export default {
       <h5>Invia un messaggio al proprietario</h5>
   </div>
   <hr>
-  <form @submit.prevent="sendMessage" class="m-3">
-    <label for="name">Nome</label>
-    <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required><hr>
-    <label for="email">Email</label>
-    <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required><hr>
-    <label for="subject">Soggetto</label>
-    <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required><hr>
-    <label for="message">Messaggio</label>
-    <textarea v-model="message" id="message" class="form-control"  required placeholder="Scrivi qui il tuo messaggio">
-    
-    </textarea>
-    <button type="submit" class="my-4 p-2">Invia Messaggio</button>
-  </form>
+  <form ref="form" @submit.prevent="sendMessage" class="m-3">
+  <label for="name">Nome</label>
+  <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required>
+  
+  <!-- Aggiungi uno spazio vuoto -->
+  <div style="margin-bottom: 10px;"></div>
+
+  <label for="email">Email</label>
+  <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required>
+  
+  <!-- Aggiungi uno spazio vuoto -->
+  <div style="margin-bottom: 10px;"></div>
+
+  <label for="subject">Soggetto</label>
+  <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required>
+  
+  <!-- Aggiungi uno spazio vuoto -->
+  <div style="margin-bottom: 10px;"></div>
+
+  <label for="message">Messaggio</label>
+  <textarea v-model="message" id="message" class="form-control" required placeholder="Scrivi qui il tuo messaggio"></textarea>
+  
+  <!-- Aggiungi uno spazio vuoto -->
+  <div style="margin-bottom: 10px;"></div>
+
+  <button type="submit" class="my-4 p-2">Invia Messaggio</button>
+</form>
+
+
 
 
 </template>
