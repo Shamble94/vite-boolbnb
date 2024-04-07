@@ -97,6 +97,7 @@ export default {
       }
     },
     ricerca(location) {
+      this.citta = location;
       this.ListaFiltrata = [];
 
       if (!location.trim()) {
@@ -173,6 +174,19 @@ export default {
       this.distanza = event.target.value;
     },
 
+    filterApartments() {
+      axios.get("http://127.0.0.1:8000/api/apartments")
+        .then((response) => {
+          // Assegna i dati degli appartamenti alla lista appropriata
+          this.ListaAppartamenti = response.data.results;
+          // Esegui la ricerca iniziale
+          this.ricerca(this.citta);
+        })
+        .catch((error) => {
+          console.error("Error fetching apartments:", error);
+        });
+    },
+
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
@@ -204,15 +218,13 @@ export default {
     },
   },
   created() {
+    this.filterApartments();
     this.getServices();
     this.startAutoPlay();
     axios
       .get("http://127.0.0.1:8000/api/pivot-apartments")
       .then((response) => {
-        // Assegna i risultati ottenuti dalla chiamata API alla variabile ListaAppartamenti
         this.ListaAppartamentiPivot = response.data.results;
-        console.log(this.ListaAppartamentiPivot); // Spostato il console log qui
-        // Assegna anche i risultati filtrati alla variabile ListaFiltrata per mostrare tutti gli appartamenti all'inizio
         this.ListaFiltrata = this.ListaAppartamenti;
       })
       .catch((error) => {
@@ -238,6 +250,25 @@ export default {
         ];
         this.ListaFiltrata = this.ListaAppartamenti;
       });
+
+      
+  },
+  watch: {
+    citta(newValue) {
+      this.ricerca(newValue);
+    },
+    distanza(newValue) {
+      this.ricerca(this.citta);
+    },
+    stanze(newValue) {
+      this.ricerca(this.citta);
+    },
+    letti(newValue) {
+      this.ricerca(this.citta);
+    },
+    selectedServices(newValue) {
+      this.ricerca(this.citta);
+    },
   },
 };
 </script>
