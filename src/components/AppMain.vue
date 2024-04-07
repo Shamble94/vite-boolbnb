@@ -31,6 +31,8 @@ export default {
       /* LA NUOVA LISTA FILTRATA PER GLI APPARTAMENTI CERCATI */
       ListaFiltrata: [],
 
+      ListaSponsorPivot: [],
+
       /* LA CITTA' CERCATA */
       citta: "",
       selectedServices: [],
@@ -103,7 +105,6 @@ export default {
 
 
       if (this.citta.length == 0 || this.citta == '' || this.citta == 'gg') {
-        console.log('c');
         this.ListaFiltrata = this.ListaAppartamenti;
         return;
       } 
@@ -187,9 +188,71 @@ export default {
     filterApartments() {
       axios.get("http://127.0.0.1:8000/api/apartments")
         .then((response) => {
-          // Assegna i dati degli appartamenti alla lista appropriata
+
+          axios.get("http://127.0.0.1:8000/api/pivot-table")
+        .then((pivotResponse) => {
+
+          this.ListaSponsorPivot = pivotResponse.data.results;
+
+          const currentDate = new Date();
+
+          const year = currentDate.getFullYear();
+          const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+          const day = String(currentDate.getDate()).padStart(2, '0');
+          const hours = String(currentDate.getHours()).padStart(2, '0');
+          const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+          const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+          const milliseconds = String(currentDate.getMilliseconds()).padStart(3, '0');
+
+          const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+
+          console.log('Data corrente:', formattedDate);
+
+          const idList = this.ListaAppartamentiPivot.map(appartamento => appartamento.id);
+
+          this.ListaSponsorPivot.forEach(element => {
+            
+            const apartments_id = element.apartments_id;
+            const sponsor_id = element.sponsor_id;
+            const apartmentProxy = element;
+
+            this.ListaAppartamentiPivot.forEach(element => {
+              if(element.id == apartments_id){
+
+                const nowTime = new Date();
+                const createdAt = new Date(apartmentProxy.created_at);
+                createdAt.setHours(createdAt.getHours() - 2); 
+
+                const diffInMilliseconds = Math.abs(nowTime - createdAt);
+
+                const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+
+                if(sponsor_id == 1){
+                  if(diffInHours >= 24 ){
+                    this.ListaAppartamentiPivot = this.ListaAppartamentiPivot.filter(appartamento => appartamento.id !== element.id);
+                  }
+                }
+                else if(sponsor_id == 2){
+                  if(diffInHours >= 72 ){
+                    this.ListaAppartamentiPivot = this.ListaAppartamentiPivot.filter(appartamento => appartamento.id !== element.id);
+                  }
+                }
+                else if(sponsor_id == 3){
+                  if(diffInHours >= 144 ){
+                    this.ListaAppartamentiPivot = this.ListaAppartamentiPivot.filter(appartamento => appartamento.id !== element.id);
+                  }
+                }
+
+                console.log(this.ListaAppartamentiPivot)
+              }
+            });
+            
+            
+            /* console.log("Creazione sponsor:", createdAt);
+            console.log("Element:", element); */
+          });
+        });
           this.ListaAppartamenti = response.data.results;
-          // Esegui la ricerca iniziale
           this.ricerca(this.citta);
         })
         .catch((error) => {
@@ -220,7 +283,6 @@ export default {
         .get("http://127.0.0.1:8000/api/service")
         .then((response) => {
           this.services = response.data.results;
-          console.log(this.services);
         })
         .catch((error) => {
           console.error("Error fetching services:", error);
