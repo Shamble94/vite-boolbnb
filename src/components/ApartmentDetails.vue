@@ -74,7 +74,7 @@ sendMessage() {
             this.apartment.latitude
           ) {
             this.loader = true;
-            this.initializeMap(); // Call initializeMap here
+            this.initializeMap(); 
           } else {
             console.error(
               "Dati di longitudine o latitudine mancanti o non validi"
@@ -83,48 +83,48 @@ sendMessage() {
         });
     },
     initializeMap() {
-      if (!this.map && this.apartment) {
-        const longitude = parseFloat(this.apartment.longitude);
-        const latitude = parseFloat(this.apartment.latitude);
+  if (!this.map && this.apartment) {
+    const longitude = parseFloat(this.apartment.longitude);
+    const latitude = parseFloat(this.apartment.latitude);
 
-        if (isNaN(longitude) || isNaN(latitude)) {
-          console.error("Le coordinate non sono valide:", longitude, latitude);
-          return;
-        }
+    if (isNaN(longitude) || isNaN(latitude)) {
+      console.error("Le coordinate non sono valide:", longitude, latitude);
+      return;
+    }
 
-        this.map = tt.map({
-          key: this.apiKey,
-          container: this.$refs.map,
-          center: [longitude, latitude],
-          zoom: 16,
-        });
+    const map = tt.map({
+      key: this.apiKey,
+      container: this.$refs.map,
+      center: [longitude, latitude],
+      zoom: 16,
+    });
 
-        this.map.on("load", () => {
-          console.log("Map loaded."); // Add this console log
-          console.log(latitude);
-          try {
-            this.marker = new tt.Marker()
-              .setLngLat([longitude, latitude])
-              .addTo(this.map);
-            console.log("Marker added successfully.");
-          } catch (error) {
-            console.error("Error adding marker:", error);
-          }
-        });
-
-        const bboxPadding = 0.01; // Adjust this value as needed
-        const bbox = [
-          longitude - bboxPadding, // Min Longitude (o West)
-          latitude - bboxPadding, // Min Latitude (o South)
-          longitude + bboxPadding, // Max Longitude (o East)
-          latitude + bboxPadding, // Max Latitude (o North)
-        ];
-
-        this.map.fitBounds(bbox, {
-          padding: { top: 10, bottom: 10, left: 10, right: 10 },
-        });
+    map.on("load", () => {
+      try {
+        const marker = new tt.Marker()
+          .setLngLat([this.apartment.longitude, this.apartment.latitude])
+          .addTo(map);
+      } catch (error) {
+        console.error("Error adding marker:", error);
       }
-    },
+    });
+
+    this.map = map;
+
+    const bboxPadding = 0.01; 
+    const bbox = [
+      longitude - bboxPadding, 
+      latitude - bboxPadding, 
+      longitude + bboxPadding, 
+      latitude + bboxPadding, 
+    ];
+
+    this.map.fitBounds(bbox, {
+      padding: { top: 10, bottom: 10, left: 10, right: 10 },
+    });
+  }
+}
+,
   },
 }
 </script>
@@ -132,13 +132,8 @@ sendMessage() {
 <template>
 
      <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
-    <!--  -->
 
-  <link
-    rel="stylesheet"
-    type="text/css"
-    href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css"
-  />
+
   <div class="container" v-if="loader">
     <div class="row">
       <h1 class="apartments my-4">{{ apartment.description }}</h1>
