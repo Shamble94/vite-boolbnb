@@ -44,7 +44,6 @@ sendMessage() {
   // Faccio la chiamata passando i dati
   axios.post(`http://127.0.0.1:8000/api/message`, data).then((response) => {
     if (response.data.success) {
-      console.log('gg')
         this.name = '';
         this.email = '';
         this.subject = "";
@@ -67,7 +66,6 @@ sendMessage() {
         .get(`${this.store.baseUrl}/api/apartments/${this.$route.params.id}`)
         .then((response) => {
           this.apartment = response.data.result;
-          console.log("Appartamento:", this.apartment);
           if (
             this.apartment &&
             this.apartment.longitude &&
