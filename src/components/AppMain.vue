@@ -415,7 +415,7 @@ export default {
   <div class="sponsored-apartment" v-if="this.citta == ''">
     <div class="title-section">
       <h3>Appartamenti in evidenza</h3>
-      <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
+      <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati.</p>
     </div>
 
     <div class="card-container mt-5">
@@ -464,13 +464,23 @@ export default {
       <!-- Liste card -->
       <div class="container-fluid p-0">
         <div class="row">
-          <AppCard
+          <AppCard v-if="this.citta != ''"
             class="me-5"
             v-for="(card, index) in this.ListaFiltrata"
             :key="index"
             :card="card"
             @click="handleCardClick(card)"
             :isSponsored="card.isSponsored"
+          />
+          
+          <AppCard 
+            class="me-5"
+            v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
+
+            :card="card"
+            @click="handleCardClick(card)"
+            :isSponsored="card.isSponsored"
+            v-else
           />
         </div>
       </div>
