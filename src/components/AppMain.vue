@@ -375,7 +375,35 @@ export default {
     </div>
   </div>
 
-  <div class="sponsored-apartment"></div>
+  <div class="main-section">
+    <div class="sponsored-apartment">
+      <div class="title-section">
+        <h3>Appartamenti in evidenza</h3>
+        <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
+      </div>
+
+      <div class="card-container">
+        <div
+          v-if="showNoApartmentsMessage"
+          class="no-apartments-message text-center"
+        >
+          Non ci sono appartamenti che rispecchiano i filtri inseriti
+        </div> 
+        <!-- Liste card -->
+         <div class="card-div">
+          <AppCard
+            class="mx-2"
+            v-for="(card, index) in ListaAppartamentiPivot"
+            :key="'pivot_' + index"
+            :card="card"
+            @click="handleCardClick(card)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
   <!-- <div class="relative">
     <div class="carousel">
       <img
@@ -480,22 +508,7 @@ export default {
       </div>
 
       <div class="sponsored-section">
-        <div
-          v-if="showNoApartmentsMessage"
-          class="no-apartments-message text-center"
-        >
-          Non ci sono appartamenti che rispecchiano i filtri inseriti
-        </div> -->
-        <!-- Liste card -->
-        <!-- div class="card-div">
-          <AppCard
-            class="mx-2"
-            v-for="(card, index) in ListaAppartamentiPivot"
-            :key="'pivot_' + index"
-            :card="card"
-            @click="handleCardClick(card)"
-          />
-        </div>
+        
       </div>
     </div>
   </div> -->
@@ -594,12 +607,31 @@ body{
 
 }
 
-
+.main-section{
+  width: 100%;
+  background-color: white;
+  padding-top: 100px;
+}
 .sponsored-apartment{
   width: 100%;
-  height: 200px;
-  background-color: red;
-  margin-top: 100px;
+  background-color: rgb(241, 241, 241);
+  padding: 0 100px;
+
+  h3{
+    font-weight: 700;
+    font-size: 35px;
+  }
+
+  p{
+    font-size: 20px;
+  }
+
+  .card-container{
+    width: 100%;
+    height: 100%;
+
+  }
+
 }
 
 
