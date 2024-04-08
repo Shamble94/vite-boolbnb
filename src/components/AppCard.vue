@@ -8,10 +8,10 @@ export default {
 </script>
 
 <template>
-  <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 my-2">
+  <div class="col-xl-2 col-lg-3">
     <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
-      class="text-decoration-none m-3">
+      class="text-decoration-none me-3">
       <div class="my-card">
         <div class="img-container">
           <img
@@ -48,10 +48,9 @@ export default {
 <style lang="scss">
 @use "../style/general.scss";
 
-
 .img-container {
-  width: 400px;
-  height: 400px;
+  width: 270px;
+  height: 270px;
   overflow: hidden; 
 
   img {
@@ -67,6 +66,7 @@ h2{
   font-weight: 700;
   color: black;
   margin-top: 10px;
+  font-size: 20px;
 }
 
 p{

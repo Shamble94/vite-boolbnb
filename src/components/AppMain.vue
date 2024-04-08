@@ -375,33 +375,63 @@ export default {
     </div>
   </div>
 
-  <div class="main-section">
-    <div class="sponsored-apartment">
-      <div class="title-section">
-        <h3>Appartamenti in evidenza</h3>
-        <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
-      </div>
+<div class="main-section">
+  <div class="sponsored-apartment">
+    <div class="title-section">
+      <h3>Appartamenti in evidenza</h3>
+      <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
+    </div>
 
-      <div class="card-container">
-        <div
-          v-if="showNoApartmentsMessage"
-          class="no-apartments-message text-center"
-        >
-          Non ci sono appartamenti che rispecchiano i filtri inseriti
-        </div> 
-        <!-- Liste card -->
-         <div class="card-div">
-          <AppCard
-            class="mx-2"
-            v-for="(card, index) in ListaAppartamentiPivot"
-            :key="'pivot_' + index"
-            :card="card"
-            @click="handleCardClick(card)"
-          />
+    <div class="card-container mt-5">
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
+        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      </div> 
+      <!-- Liste card -->
+      <div class="container-fluid p-0">
+        <div class="row">
+            <AppCard
+              class="me-5"
+              v-for="(card, index) in ListaAppartamentiPivot"
+              :key="'pivot_' + index"
+              :card="card"
+              @click="handleCardClick(card)"
+            />
         </div>
       </div>
     </div>
   </div>
+
+  <div class="sponsored-apartment mt-5 pt-5">
+    <div class="title-section">
+      <h3>Appartamenti aggiunti di recente</h3>
+      <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
+    </div>
+
+    <div class="card-container mt-5">
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
+        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      </div> 
+      <!-- Liste card -->
+      <div class="container-fluid p-0">
+        <div class="row">
+            <AppCard
+              v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
+              :key="index"
+              :card="card"
+              @click="handleCardClick(card)"
+            />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   
   <!-- <div class="relative">
@@ -514,23 +544,7 @@ export default {
   </div> -->
 
   <!-- Contenuto -->
-<!--   <div class="container p-5">
-    <div class="row">
-      <div
-        v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center"
-      >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
-      </div> -->
-      <!-- Liste card -->
-      <!-- <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
-      <AppCard
-        v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
-        :key="index"
-        :card="card"
-      />
-    </div>
-  </div> -->
+<!--    -->
 </template>
 
 <style lang="scss" scoped>
@@ -614,7 +628,6 @@ body{
 }
 .sponsored-apartment{
   width: 100%;
-  background-color: rgb(241, 241, 241);
   padding: 0 100px;
 
   h3{
@@ -632,6 +645,10 @@ body{
 
   }
 
+}
+
+.card-div{
+  display: flex;
 }
 
 
