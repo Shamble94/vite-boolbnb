@@ -359,83 +359,7 @@ export default {
 
 <template>
   <AppHeader @search-city="ricerca" />
-
-  <div class="jumbo-background">
-    <div class="jumbotron">
-      <div class="title-jumbotron-container">
-        <h1>Trova l'appartamento perfetto per te!</h1>
-        <p class="description-jumbotron">Benvenuto nel tuo portale per la casa perfetta! Scopri la nostra  variegata selezione di appartamenti, dall'elegante al moderno. Trova la  tua dimora ideale con noi oggi stesso!</p>
-        <button class="register-jumbotron-btn">Registrati</button>
-
-        <div class="img-jumbotron-container">
-          <img src="/pngegg.png" alt="Foto appartamento">
-        </div>
-        
-      </div>
-    </div>
-  </div>
-
-<div class="main-section">
-  <div class="sponsored-apartment">
-    <div class="title-section">
-      <h3>Appartamenti in evidenza</h3>
-      <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
-    </div>
-
-    <div class="card-container mt-5">
-      <div
-        v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center"
-      >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
-      </div> 
-      <!-- Liste card -->
-      <div class="container-fluid p-0">
-        <div class="row">
-          <AppCard
-              class="me-5"
-              v-for="(card, index) in ListaAppartamentiPivot"
-              :key="'pivot_' + index"
-              :card="card"
-              @click="handleCardClick(card)"
-            />
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="sponsored-apartment mt-5 pt-5">
-    <div class="title-section">
-      <h3>Appartamenti aggiunti di recente</h3>
-      <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
-    </div>
-
-    <div class="card-container mt-5">
-      <div
-        v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center"
-      >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
-      </div> 
-      <!-- Liste card -->
-      <div class="container-fluid p-0">
-        <div class="row">
-            <AppCard
-              class="me-5"
-              v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
-              :key="index"
-              :card="card"
-              @click="handleCardClick(card)"
-            />
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-  
-  <!-- <div class="relative">
+  <div class="relative">
     <div class="carousel">
       <img
         v-for="(slide, index) in slides"
@@ -527,9 +451,9 @@ export default {
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 
- <!--  <div class="container-fluid p-5">
+  <div class="container-fluid p-5">
     <div class="row">
       <h1 class="text-center">
         <i class="fa-solid fa-hand-sparkles colore-viola ruotare"></i>
@@ -539,122 +463,50 @@ export default {
       </div>
 
       <div class="sponsored-section">
-        
+        <div
+          v-if="showNoApartmentsMessage"
+          class="no-apartments-message text-center"
+        >
+          Non ci sono appartamenti che rispecchiano i filtri inseriti
+        </div>
+        <!-- Liste card -->
+        <div class="card-div">
+          <AppCard
+            class="mx-2"
+            v-for="(card, index) in ListaAppartamentiPivot"
+            :key="'pivot_' + index"
+            :card="card"
+            @click="handleCardClick(card)"
+          />
+        </div>
       </div>
     </div>
-  </div> -->
+  </div>
 
   <!-- Contenuto -->
-<!--    -->
+  <div class="container p-5">
+    <div class="row">
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
+        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      </div>
+      <!-- Liste card -->
+      <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
+      <AppCard
+        v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
+        :key="index"
+        :card="card"
+      />
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
 
-body{
-  background-color: white;
-}
-
-.jumbo-background{
-  width: 100%;
-  background: rgb(0, 0, 255);
-  background: linear-gradient(184deg, rgba(223,223,236,1) 0%, rgba(225,228,235,1) 50%, rgba(255,255,255,1) 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 50px 100px;
-  padding-top: 150px;
-
-  .jumbotron{
-    width: 100%;
-    height: 100%;
-    background-color: rgb(255, 255, 255);
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-
-    -webkit-box-shadow: 0px 2px 14px 0px #0000001a;
-    -moz-box-shadow: 0px 2px 14px 0px #0000001a;
-    -o-box-shadow: 0px 2px 14px 0px #0000001a;
-    box-shadow: 0px 2px 14px 0px #0000001a;
-
-    padding: 120px;
-
-    .title-jumbotron-container{
-      width: 700px;
-
-      h1{
-        font-weight: 900;
-        font-size: 60px;
-      }
-    }
-
-    .description-jumbotron{
-        margin-right: 100px;
-        margin-top: 50px;
-        color: rgb(98, 98, 98);
-        font-size: 24px;
-        line-height: 1.7;
-    }
-
-    .register-jumbotron-btn{
-      border: none;
-      padding: 15px 70px;
-      font-size: 20px;
-      background-color: #5968EF;
-      color: white;
-      font-weight: 800;
-      border-radius: 10px;
-      margin-top: 40px;
-    }
-
-    img{
-      width: 60%;
-      position: absolute;
-      right: -15%;
-      bottom: 0;
-      object-fit: contain;
-    }
-  }
-}
-
-@media screen and (max-width: 1200px) {
-
-}
-
-.main-section{
-  width: 100%;
-  background-color: white;
-  padding-top: 100px;
-}
-.sponsored-apartment{
-  width: 100%;
-  padding: 0 100px;
-
-  h3{
-    font-weight: 700;
-    font-size: 35px;
-  }
-
-  p{
-    font-size: 20px;
-  }
-
-  .card-container{
-    width: 100%;
-    height: 100%;
-
-  }
-
-}
-
-.card-div{
-  display: flex;
-}
-
-
-
-/* .filter-row {
+.filter-row {
   width: 100%;
   height: 100px;
   position: relative;
@@ -730,9 +582,9 @@ body{
   }
 }
 
-.distance-filter-section { */
+.distance-filter-section {
   /* Stili di base */
-  /* opacity: 0;
+  opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -926,5 +778,5 @@ input.largerCheckbox {
   font-weight: 700;
   text-align: center;
   padding: 0 500px;
-} */
+}
 </style>
