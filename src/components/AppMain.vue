@@ -3,11 +3,9 @@ import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
 import AppHeader from "./AppHeader.vue";
-/* FIXME: NELL'INPUT SE IO INSERISCO LA CITTA' DEVE CERCARE QUESTA IN BASE ALLE COORDINATE. 
-          SE LE COORDINATE SI TROVANO ENTRO UN RAGGIO DI 20KM ALLORA E' CORRETTO.
-*/
+
 export default {
-  name: "AppMain", // Cambiato nome per evitare confusione
+  name: "AppMain",
   components: {
     AppCard,
     AppHeader,
@@ -18,27 +16,21 @@ export default {
       isFilterSectionVisible: false,
       isCityInputActive: false,
       ListaAppartamentiPivot: [],
-      /* LISTA DEGLI APPARTAMENTI IN UN ARRAY */
       ListaAppartamenti: [],
-      /* LA NUOVA LISTA FILTRATA PER GLI APPARTAMENTI CERCATI */
       ListaFiltrata: [],
       ListaSponsorPivot: [],
-      /* LA CITTA' CERCATA */
       citta: "",
       selectedServices: [],
       distanza: null,
       stanze: null,
       service: [],
-      /* 20KM DI DISTANZA DALLA RICERCA */
       distanza: 1,
       camere: null,
       showNoApartmentsMessage: false,
       letti: null,
       longitude: null,
       latitude: null,
-      /* CAROSELLO */
       activeImage: 0,
-      // img che prende il carosello
       slides: [
         { image: "/slide-1.jpg" },
         { image: "/slide-2.jpg" },
@@ -80,52 +72,56 @@ export default {
       }
     },
     ricerca(location) {
-      this.citta = location;
-      this.ListaFiltrata = [];
-      if (this.citta.length == 0 || this.citta == "" || this.citta == "gg") {
-        this.ListaFiltrata = this.ListaAppartamenti;
-        return;
-      }
-      if (!location.trim()) {
-        console.error("City name is required.");
-        this.ListaFiltrata = this.ListaAppartamenti;
-        return;
-      }
-      this.geocodeCity(location)
-        .then((coordinates) => {
-          this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
-            const filtroStanze =
-              this.stanze === null || appartamento.rooms >= this.stanze;
-            const filtroLetti =
-              this.letti === null || appartamento.beds >= this.letti;
-            const serviziSelezionatiPresenti = this.selectedServices.every(
-              (servizio) => {
-                return appartamento.services.some(
-                  (apartmentService) => apartmentService.name === servizio
-                );
-              }
+  this.citta = location;
+  this.ListaFiltrata = [];
+  if (this.citta.length == 0 || this.citta == "" || this.citta == "gg") {
+    this.ListaFiltrata = this.ListaAppartamenti;
+    return;
+  }
+  if (!location.trim()) {
+    console.error("City name is required.");
+    this.ListaFiltrata = this.ListaAppartamenti;
+    return;
+  }
+  this.geocodeCity(location)
+    .then((coordinates) => {
+      this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
+        const filtroStanze =
+          this.stanze === null || appartamento.rooms >= this.stanze;
+        const filtroLetti =
+          this.letti === null || appartamento.beds >= this.letti;
+        const serviziSelezionatiPresenti = this.selectedServices.every(
+          (servizio) => {
+            return appartamento.services.some(
+              (apartmentService) => apartmentService.name === servizio
             );
-            const distance = this.calculateDistance(
-              coordinates.latitude,
-              coordinates.longitude,
-              appartamento.latitude,
-              appartamento.longitude
-            );
-            const filtroDistanza =
-              this.distanza === null || distance <= this.distanza;
-            return (
-              filtroStanze &&
-              filtroLetti &&
-              filtroDistanza &&
-              serviziSelezionatiPresenti
-            );
-          });
-          this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
-        })
-        .catch((error) => {
-          console.error("Error geocoding city:", error);
-        });
-    },
+          }
+        );
+        const distance = this.calculateDistance(
+          coordinates.latitude,
+          coordinates.longitude,
+          appartamento.latitude,
+          appartamento.longitude
+        );
+        const filtroDistanza =
+          this.distanza === null || distance <= this.distanza;
+        const isSponsored = this.ListaAppartamentiPivot.some(
+          (pivotAppartamento) => pivotAppartamento.id === appartamento.id
+        ); // Verifica se l'appartamento è presente anche nella lista pivot
+        if (isSponsored) {
+          appartamento.isSponsored = true; // Aggiungi una proprietà per indicare che l'appartamento è sponsorizzato
+        }
+        return filtroStanze && filtroLetti && filtroDistanza && serviziSelezionatiPresenti;
+      });
+
+      console.log("Questi sono sponsorizzati: ", this.ListaAppartamentiPivot);
+      console.log("Questi sono filtrati: ", this.ListaFiltrata);
+      this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
+    })
+    .catch((error) => {
+      console.error("Error geocoding city:", error);
+    });
+},
     calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = this.deg2rad(lat2 - lat1);
@@ -153,76 +149,91 @@ export default {
       this.distanza = event.target.value;
     },
     filterApartments() {
+  axios
+    .get("http://127.0.0.1:8000/api/apartments")
+    .then((response) => {
       axios
-        .get("http://127.0.0.1:8000/api/apartments")
-        .then((response) => {
-          axios
-            .get("http://127.0.0.1:8000/api/pivot-table")
-            .then((pivotResponse) => {
-              this.ListaSponsorPivot = pivotResponse.data.results;
-              const currentDate = new Date();
-              const year = currentDate.getFullYear();
-              const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-              const day = String(currentDate.getDate()).padStart(2, "0");
-              const hours = String(currentDate.getHours()).padStart(2, "0");
-              const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-              const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-              const milliseconds = String(
-                currentDate.getMilliseconds()
-              ).padStart(3, "0");
-              const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
-              console.log("Data corrente:", formattedDate);
-              const idList = this.ListaAppartamentiPivot.map(
-                (appartamento) => appartamento.id
-              );
-              this.ListaSponsorPivot.forEach((element) => {
-                const apartments_id = element.apartments_id;
-                const sponsor_id = element.sponsor_id;
-                const apartmentProxy = element;
-                this.ListaAppartamentiPivot.forEach((element) => {
-                  if (element.id == apartments_id) {
-                    const nowTime = new Date();
-                    const createdAt = new Date(apartmentProxy.created_at);
-                    createdAt.setHours(createdAt.getHours() - 2);
-                    const diffInMilliseconds = Math.abs(nowTime - createdAt);
-                    const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
-                    if (sponsor_id == 1) {
-                      if (diffInHours >= 24) {
-                        this.ListaAppartamentiPivot =
-                          this.ListaAppartamentiPivot.filter(
-                            (appartamento) => appartamento.id !== element.id
-                          );
-                      }
-                    } else if (sponsor_id == 2) {
-                      if (diffInHours >= 72) {
-                        this.ListaAppartamentiPivot =
-                          this.ListaAppartamentiPivot.filter(
-                            (appartamento) => appartamento.id !== element.id
-                          );
-                      }
-                    } else if (sponsor_id == 3) {
-                      if (diffInHours >= 144) {
-                        this.ListaAppartamentiPivot =
-                          this.ListaAppartamentiPivot.filter(
-                            (appartamento) => appartamento.id !== element.id
-                          );
-                      }
-                    }
-                    console.log(this.ListaAppartamentiPivot);
+        .get("http://127.0.0.1:8000/api/pivot-table")
+        .then((pivotResponse) => {
+          this.ListaSponsorPivot = pivotResponse.data.results;
+          const currentDate = new Date();
+          const year = currentDate.getFullYear();
+          const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+          const day = String(currentDate.getDate()).padStart(2, "0");
+          const hours = String(currentDate.getHours()).padStart(2, "0");
+          const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+          const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+          const milliseconds = String(
+            currentDate.getMilliseconds()
+          ).padStart(3, "0");
+          const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+
+          const idList = this.ListaAppartamentiPivot.map(
+            (appartamento) => appartamento.id
+          );
+          this.ListaSponsorPivot.forEach((element) => {
+            const apartments_id = element.apartments_id;
+            const sponsor_id = element.sponsor_id;
+            const apartmentProxy = element;
+
+            this.ListaAppartamentiPivot.forEach((element) => {
+              if (element.id == apartments_id) {
+                const nowTime = new Date();
+                const createdAt = new Date(apartmentProxy.created_at);
+                createdAt.setHours(createdAt.getHours() - 2);
+                const diffInMilliseconds = Math.abs(nowTime - createdAt);
+                const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+                if (sponsor_id == 1) {
+                  if (diffInHours >= 24) {
+                    this.ListaAppartamentiPivot =
+                      this.ListaAppartamentiPivot.filter(
+                        (appartamento) => appartamento.id !== element.id
+                      );
                   }
-                });
-                /* console.log("Creazione sponsor:", createdAt);
-            console.log("Element:", element); */
-              });
+                } else if (sponsor_id == 2) {
+                  if (diffInHours >= 72) {
+                    this.ListaAppartamentiPivot =
+                      this.ListaAppartamentiPivot.filter(
+                        (appartamento) => appartamento.id !== element.id
+                      );
+                  }
+                } else if (sponsor_id == 3) {
+                  if (diffInHours >= 144) {
+                    this.ListaAppartamentiPivot =
+                      this.ListaAppartamentiPivot.filter(
+                        (appartamento) => appartamento.id !== element.id
+                      );
+                  }
+                }
+              }
             });
-          this.ListaAppartamenti = response.data.results;
-          this.ricerca(this.citta);
-        })
-        .catch((error) => {
-          console.error("Error fetching apartments:", error);
+          });
         });
-    },
-    // manda la foto avanti di 1 ma se al max torno a 0
+      this.ListaAppartamenti = response.data.results;
+
+      // Imposta isSponsored per tutti gli appartamenti in ListaAppartamenti
+      this.ListaAppartamenti.forEach(apartment => {
+        apartment.isSponsored = apartment.adv_level > 0; // Assumi che adv_level > 0 indica che l'appartamento è sponsorizzato
+      });
+
+      // Ordina gli appartamenti in base alla sponsorizzazione
+      this.ListaAppartamenti.sort((a, b) => {
+        if (a.isSponsored && !b.isSponsored) {
+          return -1; // Metti l'appartamento sponsorizzato prima
+        } else if (!a.isSponsored && b.isSponsored) {
+          return 1; // Metti l'appartamento non sponsorizzato dopo
+        } else {
+          return 0; // Mantieni l'ordine attuale
+        }
+      });
+
+      this.ListaFiltrata = [...this.ListaAppartamentiPivot, ...this.ListaAppartamenti.filter(apartment => !apartment.isSponsored)];
+      this.ricerca(this.citta);
+    })
+    .catch((error) => {
+      console.error("Error fetching apartments:", error);
+    });
+},
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
         this.activeImage = 0;
@@ -233,7 +244,6 @@ export default {
     setImg(index) {
       this.activeImage = index;
     },
-    // Funzione per cambiare ogni TOT tempo il carosello
     startAutoPlay() {
       setInterval(() => {
         this.nextImg();
@@ -250,17 +260,6 @@ export default {
         });
     },
   },
-  handleCardClick(card) {
-    axios
-      .post(`http://127.0.0.1:8000/api/apartments/${card.id}/clicks`)
-      .then((response) => {
-        console.log("Click registered successfully");
-        // Puoi aggiungere altre azioni qui se necessario
-      })
-      .catch((error) => {
-        console.error("Error registering click:", error);
-      });
-  },
   created() {
     this.filterApartments();
     this.getServices();
@@ -269,6 +268,11 @@ export default {
       .get("http://127.0.0.1:8000/api/pivot-apartments")
       .then((response) => {
         this.ListaAppartamentiPivot = response.data.results;
+
+        this.ListaAppartamentiPivot.forEach(apartment => {
+          apartment.isSponsored = true;
+        });
+
         this.ListaFiltrata = this.ListaAppartamenti;
       })
       .catch((error) => {
@@ -313,6 +317,7 @@ export default {
   },
 };
 </script>
+
 
 <template>
   <AppHeader @search-city="ricerca" />
@@ -407,7 +412,7 @@ export default {
 
 
 
-  <div class="sponsored-apartment">
+  <div class="sponsored-apartment" v-if="this.citta == ''">
     <div class="title-section">
       <h3>Appartamenti in evidenza</h3>
       <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
@@ -437,8 +442,16 @@ export default {
 
   <div class="sponsored-apartment mt-5 pt-5">
     <div class="title-section">
-      <h3>Appartamenti aggiunti di recente</h3>
-      <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
+      <div v-if="this.citta == ''">
+        <h3>Appartamenti aggiunti di recente</h3>
+        <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
+      </div>
+      <div v-else>
+        <h3>Appartamenti ricercati</h3>
+        <p>In questa sezione trovi gli appartamenti in base <br> alle tue ricerche</p>
+      </div>
+    
+      
     </div>
 
     <div class="card-container mt-5">
@@ -451,13 +464,14 @@ export default {
       <!-- Liste card -->
       <div class="container-fluid p-0">
         <div class="row">
-            <AppCard
-              class="me-5"
-              v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
-              :key="index"
-              :card="card"
-              @click="handleCardClick(card)"
-            />
+          <AppCard
+            class="me-5"
+            v-for="(card, index) in this.ListaFiltrata"
+            :key="index"
+            :card="card"
+            @click="handleCardClick(card)"
+            :class="{ 'is-sponsored': card.isSponsored }"
+          />
         </div>
       </div>
     </div>
@@ -489,6 +503,10 @@ export default {
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
+
+.is-sponsored {
+  border: 2px solid red; /* Imposta il bordo rosso */
+}
 
 body{
   background-color: white;
