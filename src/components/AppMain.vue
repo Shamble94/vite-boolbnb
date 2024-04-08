@@ -465,30 +465,19 @@ export default {
       <div class="sponsored-section">
         <div
           v-if="showNoApartmentsMessage"
-          class="no-apartments-message text-center mb-5"
+          class="no-apartments-message text-center"
         >
           Non ci sono appartamenti che rispecchiano i filtri inseriti
-          <div class="card-div d-none">
-            <AppCard
-              class="mx-2"
-              v-for="(card, index) in ListaAppartamentiPivot"
-              :key="'pivot_' + index"
-              :card="card"
-              @click="handleCardClick(card)"
-            />
-          </div>
         </div>
         <!-- Liste card -->
-        <div v-else>
-          <div class="card-div">
-            <AppCard
-              class="mx-2"
-              v-for="(card, index) in ListaAppartamentiPivot"
-              :key="'pivot_' + index"
-              :card="card"
-              @click="handleCardClick(card)"
-            />
-          </div>
+        <div class="card-div">
+          <AppCard
+            class="mx-2"
+            v-for="(card, index) in ListaAppartamentiPivot"
+            :key="'pivot_' + index"
+            :card="card"
+            @click="handleCardClick(card)"
+          />
         </div>
       </div>
     </div>
@@ -497,23 +486,21 @@ export default {
   <!-- Contenuto -->
   <div class="container p-5">
     <div class="row">
-      <div v-if="showNoApartmentsMessage" class="no-apartments-message text-center ">
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
         Non ci sono appartamenti che rispecchiano i filtri inseriti
-     
+      </div>
       <!-- Liste card -->
-    </div>
-    <div v-else >
-      <!-- Liste card -->
-      <div class="col-12 text-center titolo py-3 ">I nostri appartamenti</div>
-    </div>
+      <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
       <AppCard
-      v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
-      :key="index"
-      :card="card"
+        v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
+        :key="index"
+        :card="card"
       />
     </div>
   </div>
-
 </template>
 
 <style lang="scss" scoped>
