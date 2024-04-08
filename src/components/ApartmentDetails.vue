@@ -144,10 +144,10 @@ sendMessage() {
 
      <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
 
-     <div class="container" v-if="loader">
-      <div class="row margine-superiore">
-      
-      <h1 class="apartments">{{ apartment.description }}</h1>
+  <div class="container" v-if="loader">
+    <div class="row ">
+      <h1 class="apartments margine-superiore">{{ apartment.description }}</h1>
+
         <div class="col-md-6 col-5">
             <!-- Immagine Principale -->
             <div class="main-image">
@@ -280,6 +280,9 @@ img {
 
 .apartment-details p {
   font-size: 20px;
+}
+.margine-superiore{
+  margin-top: 115px;
 }
 
 .services-list {
