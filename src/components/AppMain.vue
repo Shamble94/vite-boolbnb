@@ -572,13 +572,15 @@ body{
 .card-div{
   display: flex;
 }
-/* .filter-row {
+.filter-row {
   width: 100%;
   height: 100px;
   position: relative;
   display: flex;
   align-items: center;
 }
+
+/*
 .titolo {
   width: 100%;
   background-color: #5968ef;
@@ -586,7 +588,7 @@ body{
   color: white;
   font-size: 30px;
   font-weight: bold;
-}
+} */
 .filter-header {
   display: flex;
   align-items: center;
@@ -597,9 +599,9 @@ body{
     cursor: pointer;
   }
 }
-.ruotare {
+/* .ruotare {
   transform: rotate(60deg);
-}
+} */
 .filter-window-button {
   width: 50px;
   height: 50px;
@@ -637,8 +639,8 @@ body{
     align-items: center;
   }
 }
-.distance-filter-section {
-.distance-filter-section { */
+/* .distance-filter-section {
+.distance-filter-section {  */
   /* Stili di base */
   /* opacity: 0; */
   /* opacity: 0;
