@@ -62,6 +62,12 @@ export default {
   },
 
   methods: {
+    handleCardClick(card) {
+    axios.post(`http://127.0.0.1:8000/api/apartments/${card.id}/clicks`)
+      .then(response => {
+      });
+  },
+
     toggleFilters() {
       this.isFilterSectionVisible = !this.isFilterSectionVisible;
     },
@@ -97,58 +103,83 @@ export default {
   this.ListaFiltrata = [];
 
   if (this.citta.length == 0 || this.citta == "") {
-    this.ListaFiltrata = this.ListaAppartamenti;
+    this.ListaFiltrata = [...this.ListaAppartamentiPivot, ...this.ListaAppartamenti];
     return;
   }
 
   this.geocodeCity(location)
     .then((coordinates) => {
-      // Unione delle liste degli appartamenti sponsorizzati e non sponsorizzati
-      const listaCompleta = [...this.ListaAppartamentiPivot, ...this.ListaAppartamenti];
+      // Creiamo un oggetto mappa per tenere traccia degli appartamenti
+      const mappaAppartamenti = {};
 
-      // Separazione della lista completa in case sponsorizzate e non sponsorizzate
-      const caseSponsorizzate = listaCompleta.filter(appartamento => appartamento.isSponsored);
-      const caseNonSponsorizzate = listaCompleta.filter(appartamento => !appartamento.isSponsored);
+      // Aggiungiamo gli appartamenti sponsorizzati alla mappa
+      // Aggiungiamo gli appartamenti sponsorizzati alla mappa
+this.ListaAppartamentiPivot.forEach((appartamento) => {
+  if (appartamento.services) { // Verifica se la proprietà services è definita
+    const distance = this.calculateDistance(
+      coordinates.latitude,
+      coordinates.longitude,
+      appartamento.latitude,
+      appartamento.longitude
+    );
+    const filtroDistanza = this.distanza === null || distance <= this.distanza;
+    const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
+    const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
+    const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
+      return appartamento.services.some((apartmentService) => apartmentService.name === servizio);
+    });
 
-      // Rimozione delle duplicazioni dalla lista di case sponsorizzate
-      const caseSponsorizzateSenzaDuplicati = caseSponsorizzate.filter((appartamento, index, self) =>
-        index === self.findIndex((a) => (
-          a.id === appartamento.id
-        ))
-      );
+    if (filtroDistanza && filtroStanze && filtroLetti && serviziSelezionatiPresenti) {
+      mappaAppartamenti[appartamento.id] = { ...appartamento, isSponsored: true }; // Aggiungiamo la proprietà isSponsored
+    }
+  }
+});
 
-      // Filtraggio delle case sponsorizzate corrispondenti alla ricerca
-      const caseSponsorizzateFiltrate = caseSponsorizzateSenzaDuplicati.filter((appartamento) => {
+// Aggiungiamo gli appartamenti non sponsorizzati alla mappa
+this.ListaAppartamentiPivot.forEach((appartamento) => {
+  if (appartamento.services) { // Verifica se la proprietà services è definita
+    const distance = this.calculateDistance(
+      coordinates.latitude,
+      coordinates.longitude,
+      appartamento.latitude,
+      appartamento.longitude
+    );
+    const filtroDistanza = this.distanza === null || distance <= this.distanza;
+    const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
+    const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
+    const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
+      return appartamento.services.some((apartmentService) => apartmentService.name === servizio);
+    });
+
+    if (filtroDistanza && filtroStanze && filtroLetti && serviziSelezionatiPresenti) {
+      mappaAppartamenti[appartamento.id] = { ...appartamento, isSponsored: true }; // Aggiungiamo la proprietà isSponsored
+    }
+  }
+});
+
+
+      // Aggiungiamo gli appartamenti non sponsorizzati alla mappa
+      this.ListaAppartamenti.forEach((appartamento) => {
         const distance = this.calculateDistance(
           coordinates.latitude,
           coordinates.longitude,
           appartamento.latitude,
           appartamento.longitude
         );
-        const filtroDistanza =
-          this.distanza === null || distance <= this.distanza;
+        const filtroDistanza = this.distanza === null || distance <= this.distanza;
+        const filtroStanze = this.stanze === null || appartamento.rooms >= this.stanze;
+        const filtroLetti = this.letti === null || appartamento.beds >= this.letti;
+        const serviziSelezionatiPresenti = this.selectedServices.every((servizio) => {
+          return appartamento.services.some((apartmentService) => apartmentService.name === servizio);
+        });
 
-        // Applicazione dei filtri
-        return filtroDistanza;
+        if (filtroDistanza && filtroStanze && filtroLetti && serviziSelezionatiPresenti && !mappaAppartamenti.hasOwnProperty(appartamento.id)) {
+          mappaAppartamenti[appartamento.id] = appartamento;
+        }
       });
 
-      // Filtraggio delle case non sponsorizzate corrispondenti alla ricerca
-      const caseNonSponsorizzateFiltrate = caseNonSponsorizzate.filter((appartamento) => {
-        const distance = this.calculateDistance(
-          coordinates.latitude,
-          coordinates.longitude,
-          appartamento.latitude,
-          appartamento.longitude
-        );
-        const filtroDistanza =
-          this.distanza === null || distance <= this.distanza;
-
-        // Applicazione dei filtri
-        return filtroDistanza;
-      });
-
-      // Unione delle case sponsorizzate e non sponsorizzate filtrate
-      this.ListaFiltrata = [...caseNonSponsorizzateFiltrate, ...caseSponsorizzateFiltrate];
+      // Estraiamo gli appartamenti dalla mappa e li aggiungiamo alla lista filtrata
+      this.ListaFiltrata = Object.values(mappaAppartamenti);
 
       this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
     })
@@ -156,6 +187,9 @@ export default {
       console.error("Error geocoding city:", error);
     });
 },
+
+
+
 
 
 
@@ -282,17 +316,20 @@ export default {
   created() {
   // Ottieni gli appartamenti pivot con l'indicatore isSponsored aggiunto
   axios.get("http://127.0.0.1:8000/api/pivot-apartments")
-    .then((response) => {
-      this.ListaAppartamentiPivot = response.data.results.map(appartamento => ({
-        ...appartamento,
-        isSponsored: true // Aggiungi l'indicatore isSponsored
-      }));
-      // Imposta ListaFiltrata su ListaAppartamentiPivot inizialmente
-      this.ListaFiltrata = this.ListaAppartamentiPivot;
-    })
-    .catch((error) => {
-      console.error("Error fetching pivot apartments:", error);
-    });
+  .then((response) => {
+    this.ListaAppartamentiPivot = response.data.results.map(appartamento => ({
+      ...appartamento,
+      isSponsored: true // Aggiungi l'indicatore isSponsored
+    }));
+    // Imposta ListaFiltrata su ListaAppartamentiPivot inizialmente
+    this.ListaFiltrata = this.ListaAppartamentiPivot;
+
+    // Dopo aver ottenuto gli appartamenti pivot, esegui la ricerca
+    this.ricerca(this.citta);
+  })
+  .catch((error) => {
+    console.error("Error fetching pivot apartments:", error);
+  });
 
   // Ottieni tutti gli appartamenti e ordina per sponsorizzazione
   axios.get("http://127.0.0.1:8000/api/apartments", {
