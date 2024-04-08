@@ -15,6 +15,7 @@ export default {
         email: '',
         subject: '',
         showSuccessAlert: false,
+        showForm: false,
             store,
             apartment: null,
             loader: false,
@@ -26,6 +27,10 @@ export default {
 
     created() {
       this.getApartmentDetails();
+      window.scrollTo({
+      top: 0,
+      behavior: "smooth" // Scorrimento fluido
+      })
     },
  
     methods: {
@@ -203,77 +208,77 @@ sendMessage() {
         <p class="fs-3 fw-bold mt-4">Dove sarai</p>
       <div class="col-6 mapx mt-4">
         <div ref="map" id="map"></div>
+        
         <!-- Assicurati di dare un'altezza esplicita -->
       </div>
     </div>
+    <button @click="showForm = true"  class="btn btn-primary mt-4">Contatta il venditore</button>
+
   </div>
   <hr>
-  <div class="container">
-    <div class="row">
 
+  <div>
+    <!-- Bottone per aprire il form -->
+    <div class="container">
+      <div class="row">
+        <div v-if="showForm">
+          <div class="text-center m-2 border-1">
+            <h5>Invia un messaggio al proprietario</h5>
+          </div>
+          <hr>
+    
+          <!-- Alert per il messaggio di successo -->
+          <div v-if="showSuccessAlert" class="alert alert-success">
+            Messaggio inviato con successo
+          </div>
+    
+          <!-- Il form per inviare il messaggio -->
+          <form ref="form" @submit.prevent="sendMessage" class="m-3">
+            <label for="name">Nome</label>
+            <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required>
+    
+            <!-- Aggiungi uno spazio vuoto -->
+            <div style="margin-bottom: 10px;"></div>
+    
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required>
+    
+            <!-- Aggiungi uno spazio vuoto -->
+            <div style="margin-bottom: 10px;"></div>
+    
+            <label for="subject">Oggetto</label>
+            <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required>
+    
+            <!-- Aggiungi uno spazio vuoto -->
+            <div style="margin-bottom: 10px;"></div>
+    
+            <label for="message">Messaggio</label>
+            <textarea v-model="message" id="message" class="form-control" required placeholder="Scrivi qui il tuo messaggio"></textarea>
+    
+            <!-- Aggiungi uno spazio vuoto -->
+            <div style="margin-bottom: 10px;"></div>
+    
+            <button type="submit" class="my-4 p-2">Invia Messaggio</button>
+    
+          </form>
+        </div>
+      </div>
+        
+      </div>
     </div>
-    <div class="text-center m-2 border-1 ">
+    <!-- Form per inviare il messaggio -->
   
-      <h5>Invia un messaggio al proprietario</h5>
-    </div>
-
-    <hr>
-    <div v-if="showSuccessAlert" class="alert alert-success">
-      Messaggio inviato con successo
-    </div>
-    <form ref="form" @submit.prevent="sendMessage" class="m-3">
-    <label for="name">Nome</label>
-    <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required>
-    
-    <!-- Aggiungi uno spazio vuoto -->
-    <div style="margin-bottom: 10px;"></div>
-  
-    <label for="email">Email</label>
-    <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required>
-    
-    <!-- Aggiungi uno spazio vuoto -->
-    <div style="margin-bottom: 10px;"></div>
-  
-    <label for="subject">Oggetto</label>  
-    <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required>
-    
-    <!-- Aggiungi uno spazio vuoto -->
-    <div style="margin-bottom: 10px;"></div>
-  
-    <label for="message">Messaggio</label>
-    <textarea v-model="message" id="message" class="form-control" required placeholder="Scrivi qui il tuo messaggio"></textarea>
-    
-    <!-- Aggiungi uno spazio vuoto -->
-    <div style="margin-bottom: 10px;"></div>
-  
-    <button type="submit" class="my-4 p-2"  >Invia Messaggio</button>
-    
-  </form>
-  </div>
-
-
-
-
 </template>
 
+
+  
+
+
+
+
+
 <style lang="scss" scoped>
-.modal-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 20%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Sfondo semi-trasparente */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-}
+
 img {
   width: 400px;
 }
