@@ -3,10 +3,14 @@
 import { store } from "../store.js";
 import axios from "axios";
 import tt from "@tomtom-international/web-sdk-maps";
+import AppHeader from "./AppHeader.vue";
 
 
 export default {
   name: "ApartmentDetail",
+  components: {
+    AppHeader,
+  },
 
     data() {
         return {
@@ -32,6 +36,10 @@ export default {
       behavior: "smooth" // Scorrimento fluido
       })
     },
+    mounted() {
+    // Chiamiamo initializeMap solo quando il componente è montato nel DOM
+    this.initializeMap();
+},
  
     methods: {
         // Modifica il metodo sendMessage() per gestire correttamente la risposta del backend
@@ -146,128 +154,112 @@ sendMessage() {
 </script>
 
 <template>
+  <AppHeader @search-city="ricerca" />
 
-     <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
+  <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
+  
 
-  <div class="container" v-if="loader">
-    <div class="row ">
-      <h1 class="apartments margine-superiore">{{ apartment.description }}</h1>
-
-        <div class="col-md-6 col-5">
-            <!-- Immagine Principale -->
-            <div class="main-image">
-                <img
-                    v-if="apartment.image !== '0'"
-                    :src="`${store.baseUrl}/storage/${apartment.image}`"
-                    class="card-img-top"
-                    :alt="apartment.description"
-                />
-                <img
-                    v-else
-                    src="/placeholder2.png"
-                    class="card-img-top"
-                    :alt="apartment.description"
-                />
-            </div>
+  <div class="container-fluid p-0 m-0">
+    <div class="remove-test">
+      <div class="photo-container">
+        <img
+            v-if="apartment.image !== '0'"
+            :src="`${store.baseUrl}/storage/${apartment.image}`"
+            class="card-img-top"
+            :alt="apartment.description"
+        />
+        <img
+            v-else
+            src="/placeholder2.png"
+            class="card-img-top"
+            :alt="apartment.description"
+        />
+      </div>
+      <div class="space-left"></div>
+      <div class="info-container">
+        <div class="info-single-section margine-superiore">
+          <h1>{{ apartment.address }}</h1>
+          <p>{{ apartment.description }}</p>
         </div>
-            <div class="col-6">
-                <div class="apartment-details">
-                  <p class="fs-3 fw-semibold my-3">
-                    {{ apartment.location }}
-                    <h5>{{ apartment.address }}</h5>
-                  </p>
-                  <p><h2>La casa dispone di:</h2></p>
-                  <ul class="fs-5 list-unstyled">
-                    <li>{{ apartment.rooms }} Camere  </li>
-                    <li>{{ apartment.beds }} Letti </li>
-                    <li>{{ apartment.bathrooms }} Bagni </li>
-                    <li>{{ apartment.square_meters }} m²</li>
-                    </ul>
-                <!-- Check if there are services -->
-    
-                <div v-if="apartment.services && apartment.services.length > 0">
-                  <h3>Servizi che troverai all'interno della casa:</h3>
+
+        <div class="info-single-section">
+          <h4 class="title-info-show">Dettagli</h4>
           
-                  <ul class="list-unstyled">
-                    <li v-for="(service, index) in apartment.services" :key="index">
-                      <i :class="service.icon"></i>
-                      <span class="mx-2">{{ service.name }}</span>
-                    </li>
-                  </ul>
+          <ul class="list-unstyled mt-3">
+                        <li>
+                            <i class="fa-solid fa-maximize main-color"></i><span class="ms-2 fw-bold main-color">Dimensioni:
+                                <span class="fw-light text-dark">{{ apartment.square_meters }}</span></span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-door-open main-color"></i><span class="ms-2 fw-bold main-color">Numero
+                                Stanze: <span class="fw-light text-dark">{{ apartment.rooms }}</span></span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-bed main-color"></i><span class="ms-2 fw-bold main-color">Numero
+                                Letti: <span class="fw-light text-dark">{{ apartment.beds }}</span></span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-sink main-color"></i><span class="ms-2 fw-bold main-color">Numero Bagni:
+                                <span class="fw-light text-dark">{{ apartment.bathrooms }}</span></span>
+                        </li>
+                    </ul>
+        </div>
+
+        <div class="info-single-section">
+          <h4 class="title-info-show">Servizi</h4>
+            <div class="services-group-show" v-if="apartment.services && apartment.services.length > 0">
+                <div class="service-container-show" v-for="(service, index) in apartment.services" :key="index">
+                    <i :class="service.icon"></i><span class="mx-2">{{ service.name }}</span>
                 </div>
             </div>
-              
-            
-            </div>
         </div>
-      </div>
 
-
-  <div class="container">
-    <div class="row">
-        <p class="fs-3 fw-bold mt-4">Dove sarai</p>
-      <div class="col-6 mapx mt-4">
-        <div ref="map" id="map"></div>
-        
-        <!-- Assicurati di dare un'altezza esplicita -->
-      </div>
-    </div>
-    <button @click="showForm = true"  class="btn btn-primary mt-4">Contatta il venditore</button>
-
-  </div>
-  <hr>
-
-  <div>
-    <!-- Bottone per aprire il form -->
-    <div class="container">
-      <div class="row">
-        <div v-if="showForm">
-          <div class="text-center m-2 border-1">
-            <h5>Invia un messaggio al proprietario</h5>
+        <div class="info-single-section">
+          <h4 class="title-info-show">Posizione</h4>
+          <div class="mapx mt-4" v-if="loader">
+            <div ref="map" id="map"></div>
           </div>
-          <hr>
-    
-          <!-- Alert per il messaggio di successo -->
-          <div v-if="showSuccessAlert" class="alert alert-success">
-            Messaggio inviato con successo
-          </div>
-    
-          <!-- Il form per inviare il messaggio -->
+        </div>
+
+        <div class="footer-show">
+          <h3>Contatta il venditore</h3>
           <form ref="form" @submit.prevent="sendMessage" class="m-3">
             <label for="name">Nome</label>
             <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required>
-    
-            <!-- Aggiungi uno spazio vuoto -->
+            
             <div style="margin-bottom: 10px;"></div>
-    
+
             <label for="email">Email</label>
             <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required>
-    
-            <!-- Aggiungi uno spazio vuoto -->
+            
             <div style="margin-bottom: 10px;"></div>
-    
-            <label for="subject">Oggetto</label>
+
+            <label for="subject">Soggetto</label>
             <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required>
-    
-            <!-- Aggiungi uno spazio vuoto -->
+            
             <div style="margin-bottom: 10px;"></div>
-    
+
             <label for="message">Messaggio</label>
             <textarea v-model="message" id="message" class="form-control" required placeholder="Scrivi qui il tuo messaggio"></textarea>
-    
-            <!-- Aggiungi uno spazio vuoto -->
+            
             <div style="margin-bottom: 10px;"></div>
-    
-            <button type="submit" class="my-4 p-2">Invia Messaggio</button>
-    
+
+            <button type="submit" class="my-4 p-2">INVIA</button>
           </form>
         </div>
       </div>
-        
-      </div>
     </div>
-    <!-- Form per inviare il messaggio -->
-  
+    
+    <div class="row">
+      <h1 class="apartments my-4"></h1>
+        <div class="col-md-6 col-5">
+            <!-- Immagine Principale -->
+            <div class="main-image">
+                
+            </div>
+        </div>
+            </div>
+        </div>
 </template>
 
 
@@ -278,81 +270,112 @@ sendMessage() {
 
 
 <style lang="scss" scoped>
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
-img {
-  width: 400px;
-}
+.footer-show{
+  width: calc(100% - 60vw);
+  background-color: #151515;
+  position: absolute;
+  right: 0;
+  padding: 50px;
 
-.apartment-details p {
-  font-size: 20px;
-}
-.margine-superiore{
-  margin-top: 115px;
-}
-
-.services-list {
-  display: flex;
-  flex-wrap: wrap;
-  list-style: none;
-  padding: 0;
-}
-
-.service-item {
-  margin: 10px;
-  display: flex;
-  align-items: center;
-
-  i {
-    margin-right: 5px;
+  label{
+    color: white;
   }
-}
 
-.apartments {
-  font-size: 35px;
-}
+  input{
+    margin-bottom: 20px;
+  }
 
-.img {
-  display: flex;
-  justify-content: center;
-}
-
-.back-main {
-  background-color: yellow;
-}
-
-/* Stili SCSS */
-.image-container {
-  width: 100%;
-  /* o una larghezza fissa a seconda delle tue esigenze */
-  padding-top: 100%;
-  /* Questo mantiene l'aspetto quadrato */
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-/* Assicurati che il contenitore dell'immagine mantenga il suo aspetto quadrato anche in responsive */
-@media (max-width: 768px) {
-  .image-container {
+  button{
     width: 100%;
-    /* Ajusta secondo necessità */
-    padding-top: 100%;
+    border: none;
+    border-radius: 10px;
+    background-color: #5968EF;
+    color: white;
+    font-weight: 700;
+    font-size: 23px;
+  }
+
+  h3{
+    text-align: center;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 800;
   }
 }
 
-.secondary-image img {
-  width: 100%;
-  height: auto;
-  display: block;
-  /* Assicura che le immagini si estendano per tutta la larghezza del contenitore */
-  object-fit: cover;
-  /* Opzionale: assicura che le immagini coprano lo spazio disponibile senza perdere le proporzioni */
+.main-color{
+  color: rgb(61, 123, 255);
 }
 
-.main-image img {
+li{
+  line-height: 2.3;
+}
+
+.remove-test{
   width: 100%;
-  height: auto;
-  display: block;
+  display: flex;
+  font-family: 'Inter';
+  position: relative;
+
+  .photo-container{
+    height: 100vh;
+    width: 60vw;
+    position: fixed;
+
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+  }
+
+  .space-left{
+    width: 60vw;
+    background-color: red;
+  }
+
+  .info-container{
+    width: calc(100% - 60vw);
+    background-color: rgb(255, 255, 255);
+    padding: 200px 100px;
+
+    .info-single-section{
+      margin-bottom: 50px;
+
+      .title-info-show{
+        font-weight: 900;
+        font-size: 25px;
+      }
+    }
+
+    .services-group-show{
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+    
+        .service-container-show{
+            width: fit-content;
+            padding: 7px 10px;
+            background-color: #151515;
+            border-radius: 10px;
+            color: white;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    }
+
+    h1{
+      font-weight: 700;
+      font-size: 50px;
+    }
+
+    p{
+      color: #574949;
+    }
+  }
 }
 
 #map {
@@ -360,7 +383,4 @@ img {
   height: 500px;
 }
 
-.mapx {
-  border: solid rgb(177, 176, 176) 1px;
-}
 </style>
