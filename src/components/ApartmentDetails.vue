@@ -14,6 +14,7 @@ export default {
         name: '',
         email: '',
         subject: '',
+        showSuccessAlert: false,
             store,
             apartment: null,
             loader: false,
@@ -37,8 +38,9 @@ sendMessage() {
     email: this.email,
     subject: this.subject,
     message: this.message,
+    
   };
-
+  
 
 
   // Faccio la chiamata passando i dati
@@ -48,11 +50,19 @@ sendMessage() {
         this.email = '';
         this.subject = "";
         this.message = '';
-        alert("Messaggio inviato con successo");
+        this.result_message = true
+        if(this.result_message){
+          this.showSuccessAlert = true;
+
+      // Imposta un timeout per nascondere l'alert dopo alcuni secondi (ad esempio, 3 secondi)
+      setTimeout(() => {
+        this.showSuccessAlert = false;
         window.scrollTo({
       top: 0,
       behavior: "smooth" // Scorrimento fluido
     });
+      }, 1500);
+        }
 
     } else {
         this.errors = response.data.errors;
@@ -62,8 +72,7 @@ sendMessage() {
       console.error("Errore durante l'invio del messaggio:", error);
     });
 },
-
-        
+       
 
     getApartmentDetails() {
       axios
@@ -135,9 +144,9 @@ sendMessage() {
 
      <link rel="stylesheet" type="text/css" href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css">
 
-
-  <div class="container" v-if="loader">
-    <div class="row margine-superiore">
+     <div class="container" v-if="loader">
+      <div class="row margine-superiore">
+      
       <h1 class="apartments">{{ apartment.description }}</h1>
         <div class="col-md-6 col-5">
             <!-- Immagine Principale -->
@@ -187,46 +196,7 @@ sendMessage() {
             </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <!-- Griglia per Immagini Secondarie -->
-        <!-- <div class="row">
-          <div class="col-6 secondary-image">
-            <img
-              v-if="apartment.image !== '0'"
-              :src="`${store.baseUrl}/storage/${apartment.image}`"
-              class="img-fluid"
-              :alt="apartment.description"
-            />
-          </div>
-          <div class="col-6 secondary-image">
-            <img
-              v-if="apartment.image !== '0'"
-              :src="`${store.baseUrl}/storage/${apartment.image}`"
-              class="img-fluid"
-              :alt="apartment.description"
-            />
-          </div>
-          <div class="col-6 secondary-image mt-3">
-            <img
-              v-if="apartment.image !== '0'"
-              :src="`${store.baseUrl}/storage/${apartment.image}`"
-              class="img-fluid"
-              :alt="apartment.description"
-            />
-          </div>
-          <div class="col-6 secondary-image mt-3">
-            <img
-              v-if="apartment.image !== '0'"
-              :src="`${store.baseUrl}/storage/${apartment.image}`"
-              class="img-fluid"
-              :alt="apartment.description"
-            />
-          </div>
-        </div> -->
-      </div>
 
-
- 
 
   <div class="container">
     <div class="row">
@@ -238,38 +208,48 @@ sendMessage() {
     </div>
   </div>
   <hr>
-  <div class="text-center m-2 border-1 ">
+  <div class="container">
+    <div class="row">
 
+    </div>
+    <div class="text-center m-2 border-1 ">
+  
       <h5>Invia un messaggio al proprietario</h5>
+    </div>
+
+    <hr>
+    <div v-if="showSuccessAlert" class="alert alert-success">
+      Messaggio inviato con successo
+    </div>
+    <form ref="form" @submit.prevent="sendMessage" class="m-3">
+    <label for="name">Nome</label>
+    <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required>
+    
+    <!-- Aggiungi uno spazio vuoto -->
+    <div style="margin-bottom: 10px;"></div>
+  
+    <label for="email">Email</label>
+    <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required>
+    
+    <!-- Aggiungi uno spazio vuoto -->
+    <div style="margin-bottom: 10px;"></div>
+  
+    <label for="subject">Oggetto</label>  
+    <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required>
+    
+    <!-- Aggiungi uno spazio vuoto -->
+    <div style="margin-bottom: 10px;"></div>
+  
+    <label for="message">Messaggio</label>
+    <textarea v-model="message" id="message" class="form-control" required placeholder="Scrivi qui il tuo messaggio"></textarea>
+    
+    <!-- Aggiungi uno spazio vuoto -->
+    <div style="margin-bottom: 10px;"></div>
+  
+    <button type="submit" class="my-4 p-2"  >Invia Messaggio</button>
+    
+  </form>
   </div>
-  <hr>
-  <form ref="form" @submit.prevent="sendMessage" class="m-3">
-  <label for="name">Nome</label>
-  <input type="text" id="name" v-model="name" class="form-control" placeholder="Inserisci il tuo nome" required>
-  
-  <!-- Aggiungi uno spazio vuoto -->
-  <div style="margin-bottom: 10px;"></div>
-
-  <label for="email">Email</label>
-  <input type="email" id="email" v-model="email" class="form-control" placeholder="Inserisci il tuo indirizzo email" required>
-  
-  <!-- Aggiungi uno spazio vuoto -->
-  <div style="margin-bottom: 10px;"></div>
-
-  <label for="subject">Soggetto</label>
-  <input type="text" id="subject" v-model="subject" class="form-control" placeholder="Inserisci l'oggetto del messaggio" required>
-  
-  <!-- Aggiungi uno spazio vuoto -->
-  <div style="margin-bottom: 10px;"></div>
-
-  <label for="message">Messaggio</label>
-  <textarea v-model="message" id="message" class="form-control" required placeholder="Scrivi qui il tuo messaggio"></textarea>
-  
-  <!-- Aggiungi uno spazio vuoto -->
-  <div style="margin-bottom: 10px;"></div>
-
-  <button type="submit" class="my-4 p-2" >Invia Messaggio</button>
-</form>
 
 
 
@@ -277,6 +257,23 @@ sendMessage() {
 </template>
 
 <style lang="scss" scoped>
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Sfondo semi-trasparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+}
 img {
   width: 400px;
 }
