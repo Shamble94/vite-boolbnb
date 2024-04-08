@@ -35,6 +35,10 @@ export default {
 
         <!-- <div class="d-flex align-items-center p-2">
           <h5 class="card-title text-truncate colore-viola larghezza">{{ card.address }}</h5>
+        <div class="d-flex align-items-center p-2">
+          <h5 class="card-title text-truncate colore-viola larghezza">{{ card.location }}</h5><br>
+          <h6 class="card-title text-truncate colore-viola larghezza">{{ card.address }}</h6>
+
           <div>
             <span class="bordo text-light p-2 m-1 sfondo-viola d-inline-block"><i class="fa-solid fa-bath mx-1"></i>{{ card.rooms }} </span> <br>
             <span class="bordo text-light p-2 m-1 sfondo-viola d-inline-block"><i class="fa-solid fa-bed mx-1"></i>{{ card.beds }}</span>

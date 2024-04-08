@@ -20,6 +20,13 @@ export default {
     };
   },
   methods: {
+
+    // Cancellare il valore ricerca
+    clearInput() {
+        this.cityInput = ''; 
+    },
+
+
     toggleFilterSection() {
       this.showFilterSection = !this.showFilterSection;
     },
@@ -169,14 +176,14 @@ export default {
               </svg>
             </i>
 
-            <i class="fas fa-filter icons-searchbar" @click="toggleFilterSection" ref="filterIcon"></i>
+           
 
             <!-- INPUT RICERCA -->
             <input class="input-field" type="text" v-model="cityInput" placeholder="Cerca le destinazioni" name="city"
               @keyup.enter="search" @input="handleAutocomplete" @click="showAutocomplete = true" />
 
             <!-- PULSANTE CANCELLAZIONE RICERCA -->
-            <button><i class="fa fa-xmark"></i></button>
+            <button @click="clearInput"><i class="fa fa-xmark"></i></button>
 
             <!-- SEZIONE AUTOCOMPLETE -->
             <div class="autocomplete-section" v-show="showAutocomplete" ref="autocompleteSection">
@@ -192,7 +199,7 @@ export default {
                 </li>
               </ul>
             </div>
-
+ 
             <!-- SEZIONE FILTRI -->
             <div class="filter-section" v-show="showFilterSection" ref="filterSection">
 
