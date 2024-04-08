@@ -3,6 +3,7 @@ export default {
   name: "AppCard",
   props: {
     card: Object,
+    isSponsored: Boolean,
   },
 };
 </script>
@@ -19,12 +20,14 @@ export default {
             :src="'http://127.0.0.1:8000/storage/' + card.image"
             class="img-top"
             :alt="card.title"
+            :class="{ 'is-sponsored': isSponsored }"
           />
           <img
             v-else
             src="/placeholder2.png"
             class="img-top"
             :alt="card.title"
+            :class="{ 'is-sponsored': isSponsored }"
           />
         </div>
 
@@ -47,6 +50,11 @@ export default {
 
 <style lang="scss">
 @use "../style/general.scss";
+.is-sponsored {
+  border: 3px solid #ffc815; /* Imposta il bordo rosso */
+  border-radius: 15px;
+}
+
 
 .img-container {
   width: 270px;

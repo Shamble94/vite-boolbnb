@@ -29,26 +29,23 @@ export default {
     
     /* CLICK ALL'ESTERNO DELLE FINESTRE */
     handleClickOutside(event) {
+  // RECUPERO DELLE VARIE FINESTRE E INPUT
+  const searchbar = this.$refs.searchbar;
+  const autocompleteSection = this.$refs.autocompleteSection;
+  const filterSection = this.$refs.filterSection;
+  const filterIcon = this.$refs.filterIcon;
 
-      /* RECUPERO DELLE VARIE FINESTRE E INPUT */
-      const searchbar = this.$refs.searchbar;
-      const autocompleteSection = this.$refs.autocompleteSection;
-      const filterSection = this.$refs.filterSection;
-      const filterIcon = this.$refs.filterIcon;
-
-      /* CONTROLLA SE IL CLICK E' AVVENUTO FUORI DALLA FINESTRA */
-      if (
-        searchbar && !searchbar.contains(event.target) &&
-        autocompleteSection && !autocompleteSection.contains(event.target) &&
-        filterIcon && !filterIcon.contains(event.target) &&
-        !filterSection.contains(event.target)
-      ) {
-        
-        /* CHIUDE LA FINESTRA DI AUTOCOMPLETAMENTO */
-        this.closeAutocomplete();
-
-        /* CHIUDE LA FINESTRA DI AUTOCOMPLETAMENTO */
-        this.toggleFilterSection();
+  // CONTROLLA SE IL CLICK E' AVVENUTO FUORI DALLA FINESTRA
+  if (
+    searchbar && !searchbar.contains(event.target) &&
+    autocompleteSection && !autocompleteSection.contains(event.target) &&
+    filterIcon && !filterIcon.contains(event.target) &&
+    !filterSection.contains(event.target)
+  ) {
+    // CHIUDE LA FINESTRA DI AUTOCOMPLETAMENTO
+    this.closeAutocomplete();
+    // CHIUDE LA SEZIONE FILTRI
+    this.showFilterSection = false;
   }
 },
 
