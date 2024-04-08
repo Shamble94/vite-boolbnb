@@ -457,7 +457,7 @@ export default {
     <div class="card-container mt-5">
       <div
         v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center"
+        class="no-apartments-message text-center mb-5"
       >
         Non ci sono appartamenti che rispecchiano i filtri inseriti
       </div> 

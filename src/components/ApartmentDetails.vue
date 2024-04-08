@@ -49,6 +49,10 @@ sendMessage() {
         this.subject = "";
         this.message = '';
         alert("Messaggio inviato con successo");
+        window.scrollTo({
+      top: 0,
+      behavior: "smooth" // Scorrimento fluido
+    });
 
     } else {
         this.errors = response.data.errors;
@@ -264,7 +268,7 @@ sendMessage() {
   <!-- Aggiungi uno spazio vuoto -->
   <div style="margin-bottom: 10px;"></div>
 
-  <button type="submit" class="my-4 p-2">Invia Messaggio</button>
+  <button type="submit" class="my-4 p-2" >Invia Messaggio</button>
 </form>
 
 
