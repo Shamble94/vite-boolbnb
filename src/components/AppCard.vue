@@ -8,10 +8,10 @@ export default {
 </script>
 
 <template>
-  <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 my-2">
-    <router-link
+  <div class="col-xl-2 col-lg-3">
+    <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
-      class="text-deco m-3">
+      class="text-decoration-none me-3">
       <div class="my-card">
         <div class="img-container">
           <img
@@ -28,13 +28,18 @@ export default {
           />
         </div>
 
-        <div class="d-flex align-items-center p-2">
+        <h2>{{ card.address }}</h2>
+        <p>{{ card.bathrooms }} Bagni • {{ card.beds }} Letti • {{ card.rooms }} Stanze</p>
+
+
+
+        <!-- <div class="d-flex align-items-center p-2">
           <h5 class="card-title text-truncate colore-viola larghezza">{{ card.address }}</h5>
           <div>
             <span class="bordo text-light p-2 m-1 sfondo-viola d-inline-block"><i class="fa-solid fa-bath mx-1"></i>{{ card.rooms }} </span> <br>
             <span class="bordo text-light p-2 m-1 sfondo-viola d-inline-block"><i class="fa-solid fa-bed mx-1"></i>{{ card.beds }}</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </router-link>
   </div>
@@ -42,7 +47,35 @@ export default {
 
 <style lang="scss">
 @use "../style/general.scss";
-.my-card {
+
+.img-container {
+  width: 270px;
+  height: 270px;
+  overflow: hidden; 
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 15px;
+  }
+}
+
+
+h2{
+  font-weight: 700;
+  color: black;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+p{
+  color: rgb(116, 116, 116);
+  margin-top: -5px;
+}
+
+
+/* .my-card {
   width: 100%; 
   background-color: rgb(255, 255, 255);
   border-radius: 20px;
@@ -69,5 +102,5 @@ a {
   width: 100%;
   height: 260px;
   object-fit: cover;
-}
+} */
 </style>
