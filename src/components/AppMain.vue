@@ -3,43 +3,32 @@ import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
 import AppHeader from "./AppHeader.vue";
-
 /* FIXME: NELL'INPUT SE IO INSERISCO LA CITTA' DEVE CERCARE QUESTA IN BASE ALLE COORDINATE. 
           SE LE COORDINATE SI TROVANO ENTRO UN RAGGIO DI 20KM ALLORA E' CORRETTO.
 */
-
 export default {
   name: "AppMain", // Cambiato nome per evitare confusione
   components: {
     AppCard,
     AppHeader,
   },
-
   data() {
     return {
       store,
-
       isFilterSectionVisible: false,
-
       isCityInputActive: false,
-
       ListaAppartamentiPivot: [],
-
       /* LISTA DEGLI APPARTAMENTI IN UN ARRAY */
       ListaAppartamenti: [],
-
       /* LA NUOVA LISTA FILTRATA PER GLI APPARTAMENTI CERCATI */
       ListaFiltrata: [],
-
       ListaSponsorPivot: [],
-
       /* LA CITTA' CERCATA */
       citta: "",
       selectedServices: [],
       distanza: null,
       stanze: null,
       service: [],
-
       /* 20KM DI DISTANZA DALLA RICERCA */
       distanza: 1,
       camere: null,
@@ -47,7 +36,6 @@ export default {
       letti: null,
       longitude: null,
       latitude: null,
-
       /* CAROSELLO */
       activeImage: 0,
       // img che prende il carosello
@@ -60,18 +48,15 @@ export default {
       ],
     };
   },
-
   methods: {
     handleCardClick(card) {
       axios
         .post(`http://127.0.0.1:8000/api/apartments/${card.id}/clicks`)
         .then((response) => {});
     },
-
     toggleFilters() {
       this.isFilterSectionVisible = !this.isFilterSectionVisible;
     },
-
     async geocodeCity(city) {
       try {
         const coordinates = await this.performGeocoding(city);
@@ -80,15 +65,12 @@ export default {
         throw new Error("Geocoding failed: " + error.message);
       }
     },
-
     async performGeocoding(city) {
       const apiKey = "GQoylkWTb8A3X4kupHH9BTdJj1GJaVKo";
       const encodedCity = encodeURIComponent(city);
       const apiUrl = `https://api.tomtom.com/search/2/geocode/${encodedCity}.json?key=${apiKey}`;
-
       const response = await axios.get(apiUrl);
       const data = response.data;
-
       if (data && data.results && data.results.length > 0) {
         const lat = data.results[0].position.lat;
         const lng = data.results[0].position.lon;
@@ -100,18 +82,15 @@ export default {
     ricerca(location) {
       this.citta = location;
       this.ListaFiltrata = [];
-
       if (this.citta.length == 0 || this.citta == "" || this.citta == "gg") {
         this.ListaFiltrata = this.ListaAppartamenti;
         return;
       }
-
       if (!location.trim()) {
         console.error("City name is required.");
         this.ListaFiltrata = this.ListaAppartamenti;
         return;
       }
-
       this.geocodeCity(location)
         .then((coordinates) => {
           this.ListaFiltrata = this.ListaAppartamenti.filter((appartamento) => {
@@ -119,7 +98,6 @@ export default {
               this.stanze === null || appartamento.rooms >= this.stanze;
             const filtroLetti =
               this.letti === null || appartamento.beds >= this.letti;
-
             const serviziSelezionatiPresenti = this.selectedServices.every(
               (servizio) => {
                 return appartamento.services.some(
@@ -127,7 +105,6 @@ export default {
                 );
               }
             );
-
             const distance = this.calculateDistance(
               coordinates.latitude,
               coordinates.longitude,
@@ -143,14 +120,12 @@ export default {
               serviziSelezionatiPresenti
             );
           });
-
           this.showNoApartmentsMessage = this.ListaFiltrata.length === 0;
         })
         .catch((error) => {
           console.error("Error geocoding city:", error);
         });
     },
-
     calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = this.deg2rad(lat2 - lat1);
@@ -168,18 +143,15 @@ export default {
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
-
     handleCityInputFocus() {
       this.isCityInputActive = true;
     },
     handleCityInputBlur() {
       this.isCityInputActive = false;
     },
-
     updateSliderValue(event) {
       this.distanza = event.target.value;
     },
-
     filterApartments() {
       axios
         .get("http://127.0.0.1:8000/api/apartments")
@@ -188,9 +160,7 @@ export default {
             .get("http://127.0.0.1:8000/api/pivot-table")
             .then((pivotResponse) => {
               this.ListaSponsorPivot = pivotResponse.data.results;
-
               const currentDate = new Date();
-
               const year = currentDate.getFullYear();
               const month = String(currentDate.getMonth() + 1).padStart(2, "0");
               const day = String(currentDate.getDate()).padStart(2, "0");
@@ -200,30 +170,22 @@ export default {
               const milliseconds = String(
                 currentDate.getMilliseconds()
               ).padStart(3, "0");
-
               const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
-
               console.log("Data corrente:", formattedDate);
-
               const idList = this.ListaAppartamentiPivot.map(
                 (appartamento) => appartamento.id
               );
-
               this.ListaSponsorPivot.forEach((element) => {
                 const apartments_id = element.apartments_id;
                 const sponsor_id = element.sponsor_id;
                 const apartmentProxy = element;
-
                 this.ListaAppartamentiPivot.forEach((element) => {
                   if (element.id == apartments_id) {
                     const nowTime = new Date();
                     const createdAt = new Date(apartmentProxy.created_at);
                     createdAt.setHours(createdAt.getHours() - 2);
-
                     const diffInMilliseconds = Math.abs(nowTime - createdAt);
-
                     const diffInHours = diffInMilliseconds / (1000 * 60 * 60);
-
                     if (sponsor_id == 1) {
                       if (diffInHours >= 24) {
                         this.ListaAppartamentiPivot =
@@ -246,11 +208,9 @@ export default {
                           );
                       }
                     }
-
                     console.log(this.ListaAppartamentiPivot);
                   }
                 });
-
                 /* console.log("Creazione sponsor:", createdAt);
             console.log("Element:", element); */
               });
@@ -262,7 +222,6 @@ export default {
           console.error("Error fetching apartments:", error);
         });
     },
-
     // manda la foto avanti di 1 ma se al max torno a 0
     nextImg() {
       if (this.activeImage === this.slides.length - 1) {
@@ -274,7 +233,6 @@ export default {
     setImg(index) {
       this.activeImage = index;
     },
-
     // Funzione per cambiare ogni TOT tempo il carosello
     startAutoPlay() {
       setInterval(() => {
@@ -316,7 +274,6 @@ export default {
       .catch((error) => {
         console.error("Error fetching pivot apartments:", error);
       });
-
     axios
       .get("http://127.0.0.1:8000/api/apartments", {
         params: {
@@ -359,7 +316,83 @@ export default {
 
 <template>
   <AppHeader @search-city="ricerca" />
-  <div class="relative">
+
+  <div class="jumbo-background">
+    <div class="jumbotron">
+      <div class="title-jumbotron-container">
+        <h1>Trova l'appartamento perfetto per te!</h1>
+        <p class="description-jumbotron">Benvenuto nel tuo portale per la casa perfetta! Scopri la nostra  variegata selezione di appartamenti, dall'elegante al moderno. Trova la  tua dimora ideale con noi oggi stesso!</p>
+        <button class="register-jumbotron-btn">Registrati</button>
+
+        <div class="img-jumbotron-container">
+          <img src="/pngegg.png" alt="Foto appartamento">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<div class="main-section">
+  <div class="sponsored-apartment">
+    <div class="title-section">
+      <h3>Appartamenti in evidenza</h3>
+      <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
+    </div>
+
+    <div class="card-container mt-5">
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
+        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      </div> 
+      <!-- Liste card -->
+      <div class="container-fluid p-0">
+        <div class="row">
+          <AppCard
+              class="me-5"
+              v-for="(card, index) in ListaAppartamentiPivot"
+              :key="'pivot_' + index"
+              :card="card"
+              @click="handleCardClick(card)"
+            />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sponsored-apartment mt-5 pt-5">
+    <div class="title-section">
+      <h3>Appartamenti aggiunti di recente</h3>
+      <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
+    </div>
+
+    <div class="card-container mt-5">
+      <div
+        v-if="showNoApartmentsMessage"
+        class="no-apartments-message text-center"
+      >
+        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      </div> 
+      <!-- Liste card -->
+      <div class="container-fluid p-0">
+        <div class="row">
+            <AppCard
+              class="me-5"
+              v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
+              :key="index"
+              :card="card"
+              @click="handleCardClick(card)"
+            />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- <div class="relative">
     <div class="carousel">
       <img
         v-for="(slide, index) in slides"
@@ -373,23 +406,18 @@ export default {
       />
     </div>
   </div>
-
   <div class="filter-row">
     <div class="filter-window-button" @click="toggleFilters">
       <i class="fas fa-filter"></i>
     </div>
-
     <div v-if="isFilterSectionVisible" class="filters-section p-4">
       <div class="filter-header">
         <h5 class="fw-bolder m-0">Filtra i risultati</h5>
         <i class="fa-solid fa-xmark" @click="toggleFilters"></i>
       </div>
-
       <hr />
-
       <div class="distance-section">
         <div class="section-name">Distanza</div>
-
         <div class="range-infos">
           <input
             type="range"
@@ -406,10 +434,8 @@ export default {
           >
         </div>
       </div>
-
       <div class="distance-section">
         <label for="beds-input" class="section-name">Letti</label>
-
         <div class="range-infos">
           <input
             type="text"
@@ -420,10 +446,8 @@ export default {
           />
         </div>
       </div>
-
       <div class="distance-section">
         <label for="stanze-input" class="section-name">Stanze</label>
-
         <div class="range-infos">
           <input
             type="text"
@@ -434,10 +458,8 @@ export default {
           />
         </div>
       </div>
-
       <div class="distance-section">
         <label class="section-name">Servizi</label>
-
         <div class="services-checkbox">
           <div v-for="service in services" :key="service.id">
             <input
@@ -452,8 +474,9 @@ export default {
       </div>
     </div>
   </div>
+  </div> -->
 
-  <div class="container-fluid p-5">
+ <!--  <div class="container-fluid p-5">
     <div class="row">
       <h1 class="text-center">
         <i class="fa-solid fa-hand-sparkles colore-viola ruotare"></i>
@@ -461,59 +484,107 @@ export default {
       <div class="sponsore-section-title-container">
         <h2 class="apartment-sponsored-title">Appartamenti in evidenza</h2>
       </div>
-
       <div class="sponsored-section">
-        <div
-          v-if="showNoApartmentsMessage"
-          class="no-apartments-message text-center"
-        >
-          Non ci sono appartamenti che rispecchiano i filtri inseriti
-        </div>
-        <!-- Liste card -->
-        <div class="card-div">
-          <AppCard
-            class="mx-2"
-            v-for="(card, index) in ListaAppartamentiPivot"
-            :key="'pivot_' + index"
-            :card="card"
-            @click="handleCardClick(card)"
-          />
-        </div>
       </div>
     </div>
   </div>
+  </div> -->
 
   <!-- Contenuto -->
-  <div class="container p-5">
-    <div class="row">
-      <div
-        v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center"
-      >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
-      </div>
-      <!-- Liste card -->
-      <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
-      <AppCard
-        v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
-        :key="index"
-        :card="card"
-      />
-    </div>
-  </div>
+<!--    -->
 </template>
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
-
-.filter-row {
+body{
+  background-color: white;
+}
+.jumbo-background{
+  width: 100%;
+  background: rgb(0, 0, 255);
+  background: linear-gradient(184deg, rgba(223,223,236,1) 0%, rgba(225,228,235,1) 50%, rgba(255,255,255,1) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 100px;
+  padding-top: 150px;
+  .jumbotron{
+    width: 100%;
+    height: 100%;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    -webkit-box-shadow: 0px 2px 14px 0px #0000001a;
+    -moz-box-shadow: 0px 2px 14px 0px #0000001a;
+    -o-box-shadow: 0px 2px 14px 0px #0000001a;
+    box-shadow: 0px 2px 14px 0px #0000001a;
+    padding: 120px;
+    .title-jumbotron-container{
+      width: 700px;
+      h1{
+        font-weight: 900;
+        font-size: 60px;
+      }
+    }
+    .description-jumbotron{
+        margin-right: 100px;
+        margin-top: 50px;
+        color: rgb(98, 98, 98);
+        font-size: 24px;
+        line-height: 1.7;
+    }
+    .register-jumbotron-btn{
+      border: none;
+      padding: 15px 70px;
+      font-size: 20px;
+      background-color: #5968EF;
+      color: white;
+      font-weight: 800;
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+    img{
+      width: 60%;
+      position: absolute;
+      right: -15%;
+      bottom: 0;
+      object-fit: contain;
+    }
+  }
+}
+@media screen and (max-width: 1200px) {
+}
+.main-section{
+  width: 100%;
+  background-color: white;
+  padding-top: 100px;
+}
+.sponsored-apartment{
+  width: 100%;
+  padding: 0 100px;
+  h3{
+    font-weight: 700;
+    font-size: 35px;
+  }
+  p{
+    font-size: 20px;
+  }
+  .card-container{
+    width: 100%;
+    height: 100%;
+  }
+}
+.card-div{
+  display: flex;
+}
+/* .filter-row {
   width: 100%;
   height: 100px;
   position: relative;
   display: flex;
   align-items: center;
 }
-
 .titolo {
   width: 100%;
   background-color: #5968ef;
@@ -522,23 +593,19 @@ export default {
   font-size: 30px;
   font-weight: bold;
 }
-
 .filter-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   i {
     font-size: 20px;
     margin-right: 10px;
     cursor: pointer;
   }
 }
-
 .ruotare {
   transform: rotate(60deg);
 }
-
 .filter-window-button {
   width: 50px;
   height: 50px;
@@ -552,16 +619,13 @@ export default {
   color: rgb(61, 123, 255);
   cursor: pointer;
 }
-
 .label-checkbox {
   margin-left: 10px;
   font-weight: 700;
 }
-
 .services-checkbox {
   margin-top: 10px;
 }
-
 .filters-section {
   width: 330px;
   position: absolute;
@@ -571,64 +635,55 @@ export default {
   border-radius: 10px;
   border: solid 1px rgb(231, 231, 231);
   top: 25%;
-
   .distance-section {
     margin-bottom: 10px;
   }
-
   .range-infos {
     display: flex;
     align-items: center;
   }
 }
-
 .distance-filter-section {
+.distance-filter-section { */
   /* Stili di base */
-  opacity: 0;
+  /* opacity: 0; */
+  /* opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
-
 .distance-filter-section .active {
   opacity: 1;
 }
-
 .container {
   padding: 0px 0;
 }
 .relative {
   position: relative;
 }
-
 .carousel {
   display: flex;
   justify-content: center;
   position: relative;
 }
-
 .carousel img {
   width: 100%;
   height: calc(75vh - 81px);
   object-fit: cover;
   object-position: center;
 }
-
 .carousel img:not(.active) {
   display: none;
 }
-
 .barra-ricerca {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px;
 }
-
 input[type="checkbox"] {
   widows: 100px;
   height: 100px;
   margin-bottom: 10px;
 }
-
 input[type="text"],
 input[type="number"] {
   padding: 10px;
@@ -637,28 +692,23 @@ input[type="number"] {
   font-size: 16px;
   width: 100%;
 }
-
 .fa-sliders {
   cursor: pointer;
   transition-duration: 0.3s;
   color: #7b7b7b;
-
   &:hover {
     color: #000;
   }
 }
-
 .searchbar-size {
   width: 100%;
   display: flex;
   justify-content: center;
-
   top: 60px;
   font-size: 20px;
   right: 50%;
   transform: translate(0, -100%);
 }
-
 .search-bar {
   height: 100px;
   background-color: rgb(255, 255, 255);
@@ -671,16 +721,13 @@ input[type="number"] {
   justify-content: center;
   padding: 0 25px;
   position: relative;
-
   .search-elem {
     padding: 0 20px;
     border-right: 1px solid rgb(213, 213, 213);
-
     &:nth-last-child(3) {
       border-right: 1px solid rgba(253, 0, 0, 0);
     }
   }
-
   .search-btn {
     height: 60px;
     width: 60px;
@@ -690,28 +737,23 @@ input[type="number"] {
     justify-content: center;
     align-items: center;
   }
-
   .search-elem label {
     display: block;
     margin-bottom: 5px;
     font-weight: 800;
   }
-
   .search-elem input {
     border: none;
-
     &:focus {
       outline: none !important;
       border: 1px solid rgb(0, 0, 0);
     }
   }
 }
-
 .distance-filter-section {
   width: 100%;
   background-color: rgb(255, 255, 255);
   position: absolute;
-
   top: 120px;
   border-radius: 10px;
   opacity: 1;
@@ -722,18 +764,15 @@ input[type="number"] {
   padding: 0 50px;
   font-size: 20px;
 }
-
 input.largerCheckbox {
   width: 20px;
   height: 20px;
 }
-
 .filter-section {
   width: 25%;
   height: 70px;
   background-color: rgb(255, 255, 255);
   position: absolute;
-
   right: 0;
   top: 120px;
   border-radius: 10px;
@@ -745,38 +784,33 @@ input.largerCheckbox {
   font-weight: 700;
   padding: 0 50px;
   font-size: 14px;
-
   .rooms-number-input {
     width: 40px;
   }
 }
-
 .distance-filter-section {
   height: 70px;
   background-color: rgb(255, 255, 255);
   position: absolute;
 }
-
 .slider {
   width: 65%;
   cursor: grab;
   margin-right: 20px;
 }
-
 .sponsored-section {
   padding: 0 30px;
   overflow-x: scroll;
-
   .card-div {
     width: 100%;
     display: flex;
     margin-right: 20px;
   }
 }
-
 .apartment-sponsored-title {
   font-weight: 700;
   text-align: center;
   padding: 0 500px;
 }
+} */
 </style>
