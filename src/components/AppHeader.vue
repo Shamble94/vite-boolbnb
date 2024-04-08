@@ -20,6 +20,11 @@ export default {
     };
   },
   methods: {
+    // Cancellare il valore ricerca
+    clearInput() {
+        this.cityInput = ''; 
+    },
+
     toggleFilterSection() {
       this.showFilterSection = !this.showFilterSection;
     },
@@ -176,7 +181,7 @@ export default {
               @keyup.enter="search" @input="handleAutocomplete" @click="showAutocomplete = true" />
 
             <!-- PULSANTE CANCELLAZIONE RICERCA -->
-            <button><i class="fa fa-xmark"></i></button>
+            <button @click="clearInput"><i class="fa fa-xmark"></i></button>
 
             <!-- SEZIONE AUTOCOMPLETE -->
             <div class="autocomplete-section" v-show="showAutocomplete" ref="autocompleteSection">
