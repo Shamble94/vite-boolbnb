@@ -359,7 +359,24 @@ export default {
 
 <template>
   <AppHeader @search-city="ricerca" />
-  <div class="relative">
+
+  <div class="jumbo-background">
+    <div class="jumbotron">
+      <div class="title-jumbotron-container">
+        <h1>Trova l'appartamento perfetto per te!</h1>
+        <p class="description-jumbotron">Benvenuto nel tuo portale per la casa perfetta! Scopri la nostra  variegata selezione di appartamenti, dall'elegante al moderno. Trova la  tua dimora ideale con noi oggi stesso!</p>
+        <button class="register-jumbotron-btn">Registrati</button>
+
+        <div class="img-jumbotron-container">
+          <img src="/pngegg.png" alt="Foto appartamento">
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="sponsored-apartment"></div>
+  <!-- <div class="relative">
     <div class="carousel">
       <img
         v-for="(slide, index) in slides"
@@ -451,9 +468,9 @@ export default {
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
-  <div class="container-fluid p-5">
+ <!--  <div class="container-fluid p-5">
     <div class="row">
       <h1 class="text-center">
         <i class="fa-solid fa-hand-sparkles colore-viola ruotare"></i>
@@ -468,9 +485,9 @@ export default {
           class="no-apartments-message text-center"
         >
           Non ci sono appartamenti che rispecchiano i filtri inseriti
-        </div>
+        </div> -->
         <!-- Liste card -->
-        <div class="card-div">
+        <!-- div class="card-div">
           <AppCard
             class="mx-2"
             v-for="(card, index) in ListaAppartamentiPivot"
@@ -481,32 +498,113 @@ export default {
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
   <!-- Contenuto -->
-  <div class="container p-5">
+<!--   <div class="container p-5">
     <div class="row">
       <div
         v-if="showNoApartmentsMessage"
         class="no-apartments-message text-center"
       >
         Non ci sono appartamenti che rispecchiano i filtri inseriti
-      </div>
+      </div> -->
       <!-- Liste card -->
-      <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
+      <!-- <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
       <AppCard
         v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
         :key="index"
         :card="card"
       />
     </div>
-  </div>
+  </div> -->
 </template>
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
 
-.filter-row {
+body{
+  background-color: white;
+}
+
+.jumbo-background{
+  width: 100%;
+  background: rgb(0, 0, 255);
+  background: linear-gradient(184deg, rgba(223,223,236,1) 0%, rgba(225,228,235,1) 50%, rgba(255,255,255,1) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 100px;
+  padding-top: 150px;
+
+  .jumbotron{
+    width: 100%;
+    height: 100%;
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+
+    -webkit-box-shadow: 0px 2px 14px 0px #0000001a;
+    -moz-box-shadow: 0px 2px 14px 0px #0000001a;
+    -o-box-shadow: 0px 2px 14px 0px #0000001a;
+    box-shadow: 0px 2px 14px 0px #0000001a;
+
+    padding: 120px;
+
+    .title-jumbotron-container{
+      width: 700px;
+
+      h1{
+        font-weight: 900;
+        font-size: 60px;
+      }
+    }
+
+    .description-jumbotron{
+        margin-right: 100px;
+        margin-top: 50px;
+        color: rgb(98, 98, 98);
+        font-size: 24px;
+        line-height: 1.7;
+    }
+
+    .register-jumbotron-btn{
+      border: none;
+      padding: 15px 70px;
+      font-size: 20px;
+      background-color: #5968EF;
+      color: white;
+      font-weight: 800;
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+
+    img{
+      width: 60%;
+      position: absolute;
+      right: -15%;
+      bottom: 0;
+      object-fit: contain;
+    }
+  }
+}
+
+@media screen and (max-width: 1200px) {
+
+}
+
+
+.sponsored-apartment{
+  width: 100%;
+  height: 200px;
+  background-color: red;
+  margin-top: 100px;
+}
+
+
+
+/* .filter-row {
   width: 100%;
   height: 100px;
   position: relative;
@@ -582,9 +680,9 @@ export default {
   }
 }
 
-.distance-filter-section {
+.distance-filter-section { */
   /* Stili di base */
-  opacity: 0;
+  /* opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
@@ -778,5 +876,5 @@ input.largerCheckbox {
   font-weight: 700;
   text-align: center;
   padding: 0 500px;
-}
+} */
 </style>

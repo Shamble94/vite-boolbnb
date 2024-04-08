@@ -218,11 +218,11 @@ export default {
 header {
   height: 100px;
   background-color: white;
-  -webkit-box-shadow: 0px 2px 14px 0px #00000033;
+/*   -webkit-box-shadow: 0px 2px 14px 0px #00000033;
   -moz-box-shadow: 0px 2px 14px 0px #00000033;
   -o-box-shadow: 0px 2px 14px 0px #00000033;
   box-shadow: 0px 2px 14px 0px #00000033;
-
+ */
   .register-button{
     color: black;
     margin-right: 20px
