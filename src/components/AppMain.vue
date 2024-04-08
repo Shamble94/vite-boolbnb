@@ -392,7 +392,7 @@ export default {
       <!-- Liste card -->
       <div class="container-fluid p-0">
         <div class="row">
-            <AppCard
+          <AppCard
               class="me-5"
               v-for="(card, index) in ListaAppartamentiPivot"
               :key="'pivot_' + index"
@@ -421,6 +421,7 @@ export default {
       <div class="container-fluid p-0">
         <div class="row">
             <AppCard
+              class="me-5"
               v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
               :key="index"
               :card="card"
