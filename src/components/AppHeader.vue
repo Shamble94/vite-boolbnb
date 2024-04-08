@@ -103,6 +103,9 @@ export default {
       this.showAutocomplete = false; 
     },
   },
+  toggleFilters() {
+      this.isFilterSectionVisible = !this.isFilterSectionVisible;
+    },
   mounted() {
     /* VERIFICA SE IL CLICK E' AVVENUTO NEL DOCUMENTO [PER LA CHIUSURA DELLE FINESTRE] */
     document.addEventListener("click", this.handleClickOutside);
@@ -177,7 +180,84 @@ export default {
             <!-- INPUT RICERCA -->
             <input class="input-field" type="text" v-model="cityInput" placeholder="Cerca le destinazioni" name="city"
               @keyup.enter="search" @input="handleAutocomplete" @click="showAutocomplete = true" />
+              <div class="filter-row">
+    <div class="filter-window-button" @click="toggleFilters">
+      <i class="fas fa-filter"></i>
+    </div>
 
+    <div v-if="isFilterSectionVisible" class="filters-section p-4">
+      <div class="filter-header">
+        <h5 class="fw-bolder m-0">Filtra i risultati</h5>
+        <i class="fa-solid fa-xmark" @click="toggleFilters"></i>
+      </div>
+
+      <hr />
+
+      <div class="distance-section">
+        <div class="section-name">Distanza</div>
+
+        <div class="range-infos">
+          <input
+            type="range"
+            v-model="distanza"
+            min="1"
+            max="200"
+            value="1"
+            class="slider"
+            id="radius-input"
+            @input="updateSliderValue"
+          />
+          <span id="slider-value" class="fw-bolder fs-5"
+            >{{ distanza }} km</span
+          >
+        </div>
+      </div>
+
+      <div class="distance-section">
+        <label for="beds-input" class="section-name">Letti</label>
+
+        <div class="range-infos">
+          <input
+            type="text"
+            name="beds-input"
+            v-model="letti"
+            id="beds-input"
+            placeholder="Inserisci il numero di letti"
+          />
+        </div>
+      </div>
+
+      <div class="distance-section">
+        <label for="stanze-input" class="section-name">Stanze</label>
+
+        <div class="range-infos">
+          <input
+            type="text"
+            name="stanze-input"
+            v-model="stanze"
+            id="stanze-input"
+            placeholder="Inserisci il numero di stanze"
+          />
+        </div>
+      </div>
+
+      <div class="distance-section">
+        <label class="section-name">Servizi</label>
+
+        <div class="services-checkbox">
+          <div v-for="service in services" :key="service.id">
+            <input
+              type="checkbox"
+              class="largerCheckbox"
+              :value="service.name"
+              v-model="selectedServices"
+            />
+            <label class="label-checkbox">{{ service.name }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
             <!-- PULSANTE CANCELLAZIONE RICERCA -->
             <button @click="clearInput"><i class="fa fa-xmark"></i></button>
 
