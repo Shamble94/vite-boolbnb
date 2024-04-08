@@ -470,7 +470,7 @@ export default {
             :key="index"
             :card="card"
             @click="handleCardClick(card)"
-            :class="{ 'is-sponsored': card.isSponsored }"
+            :isSponsored="card.isSponsored"
           />
         </div>
       </div>
