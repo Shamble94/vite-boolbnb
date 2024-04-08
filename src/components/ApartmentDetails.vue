@@ -133,8 +133,8 @@ sendMessage() {
 
 
   <div class="container" v-if="loader">
-    <div class="row">
-      <h1 class="apartments my-4">{{ apartment.description }}</h1>
+    <div class="row margine-superiore">
+      <h1 class="apartments">{{ apartment.description }}</h1>
         <div class="col-md-6 col-5">
             <!-- Immagine Principale -->
             <div class="main-image">
