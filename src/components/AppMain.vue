@@ -441,10 +441,10 @@ export default {
     </div>
   </div>
 
-  <div class="container-fluid p-5">
+  <div class="container p-5">
     <div class="row">
-      
-      <h2 class="apartment-sponsored-title">APPARTAMENTI PIU' RILEVANTI</h2>
+      <h1 class="text-center"><i class="fa-solid fa-hand-sparkles colore-viola ruotare"></i></h1>
+      <h2 class="apartment-sponsored-title">Appartamenti in <br>evidenza</h2>
       <div class="sponsored-section">
         <div
           v-if="showNoApartmentsMessage"
@@ -466,8 +466,9 @@ export default {
   </div>
 
   <!-- Contenuto -->
-  <div class="container-fluid p-5">
+  <div class="container p-5">
     <div class="row">
+
       <div
         v-if="showNoApartmentsMessage"
         class="no-apartments-message text-center"
@@ -475,6 +476,7 @@ export default {
         Non ci sono appartamenti che rispecchiano i filtri inseriti
       </div>
       <!-- Liste card -->
+      <div class="col-12 text-center titolo py-3">I nostri appartamenti</div>
       <AppCard
         v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
         :key="index"
@@ -495,6 +497,15 @@ export default {
   align-items: center;
 }
 
+.titolo{
+  width: 100%;
+  background-color: #5968EF;
+  border-radius: 10px;
+  color: white;
+  font-size: 30px;
+  font-weight: bold;
+}
+
 .filter-header {
   display: flex;
   align-items: center;
@@ -505,6 +516,10 @@ export default {
     margin-right: 10px;
     cursor: pointer;
   }
+}
+
+.ruotare{
+  transform: rotate(60deg);
 }
 
 .filter-window-button {
@@ -732,14 +747,10 @@ input.largerCheckbox {
 }
 
 .sponsored-section{
-  background-color: rgb(255, 255, 255);
-  border-radius: 10px;
+
   padding: 0 30px;
   overflow-x: scroll;
-  -webkit-box-shadow: 0px 0px 14px 0px #00000026;
-  -moz-box-shadow: 0px 0px 14px 0px #00000026;
-  -o-box-shadow: 0px 0px 14px 0px #00000026;
-  box-shadow: 0px 0px 14px 0px #00000026;
+
 
   .card-div{
     width: 100%;
@@ -753,4 +764,5 @@ input.largerCheckbox {
   text-align: center;
   margin-bottom: 20px
 }
+
 </style>
