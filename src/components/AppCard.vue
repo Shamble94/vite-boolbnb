@@ -8,10 +8,11 @@ export default {
 </script>
 
 <template>
-  <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 my-2">
-    <router-link
+
+    <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
-      class="text-deco m-3">
+      class="text-decoration-none m-3">
+
       <div class="my-card">
         <div class="img-container">
           <img
@@ -38,12 +39,43 @@ export default {
         </div>
       </div>
     </router-link>
-  </div>
 </template>
 
 <style lang="scss">
 @use "../style/general.scss";
+
 .my-card {
+
+
+
+.img-container {
+  width: 400px;
+  height: 400px;
+  overflow: hidden; 
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 15px;
+  }
+}
+
+
+h2{
+  font-weight: 700;
+  color: black;
+  margin-top: 10px;
+}
+
+p{
+  color: rgb(116, 116, 116);
+  margin-top: -5px;
+}
+}
+
+/* .my-card {
+>>>>>>> parent of fac9105 ([UPDATE] added recent cards)
   width: 100%; 
   background-color: rgb(255, 255, 255);
   border-radius: 20px;
