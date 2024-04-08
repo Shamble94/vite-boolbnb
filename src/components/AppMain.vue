@@ -317,6 +317,7 @@ export default {
 <template>
   <AppHeader @search-city="ricerca" />
 
+
   <div class="jumbo-background">
     <div class="jumbotron">
       <div class="title-jumbotron-container">
@@ -327,39 +328,38 @@ export default {
         <div class="img-jumbotron-container">
           <img src="/pngegg.png" alt="Foto appartamento">
         </div>
-
       </div>
     </div>
   </div>
 
-<div class="main-section">
-  <div class="sponsored-apartment">
-    <div class="title-section">
-      <h3>Appartamenti in evidenza</h3>
-      <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
-    </div>
+  <div class="main-section">
+    <div class="sponsored-apartment">
+      <div class="title-section">
+        <h3>Appartamenti in evidenza</h3>
+        <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati</p>
+      </div>
 
-    <div class="card-container mt-5">
-      <div
-        v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center"
-      >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
-      </div> 
-      <!-- Liste card -->
-      <div class="container-fluid p-0">
-        <div class="row">
+      <div class="card-container">
+        <div
+          v-if="showNoApartmentsMessage"
+          class="no-apartments-message text-center"
+        >
+          Non ci sono appartamenti che rispecchiano i filtri inseriti
+        </div> 
+        <!-- Liste card -->
+         <div class="card-div">
           <AppCard
-              class="me-5"
-              v-for="(card, index) in ListaAppartamentiPivot"
-              :key="'pivot_' + index"
-              :card="card"
-              @click="handleCardClick(card)"
-            />
+            class="mx-2"
+            v-for="(card, index) in ListaAppartamentiPivot"
+            :key="'pivot_' + index"
+            :card="card"
+            @click="handleCardClick(card)"
+          />
         </div>
       </div>
     </div>
   </div>
+
 
   <div class="sponsored-apartment mt-5 pt-5">
     <div class="title-section">
@@ -388,7 +388,7 @@ export default {
       </div>
     </div>
   </div>
-</div>
+
 
 
 
@@ -485,6 +485,7 @@ export default {
         <h2 class="apartment-sponsored-title">Appartamenti in evidenza</h2>
       </div>
       <div class="sponsored-section">
+<<<<<<< HEAD
       </div>
     </div>
   </div>
@@ -492,13 +493,33 @@ export default {
 
   <!-- Contenuto -->
 <!--    -->
+
+        <div
+          v-if="showNoApartmentsMessage"
+          class="no-apartments-message text-center"
+        >
+          Non ci sono appartamenti che rispecchiano i filtri inseriti
+        </div>
+         Liste card 
+        <div class="card-div">
+          <AppCard
+            class="mx-2"
+            v-for="(card, index) in ListaAppartamentiPivot"
+            :key="'pivot_' + index"
+            :card="card"
+            @click="handleCardClick(card)"
+          />
+        </div>
+
 </template>
 
 <style lang="scss" scoped>
 @use "../style/general.scss";
+
 body{
   background-color: white;
 }
+
 .jumbo-background{
   width: 100%;
   background: rgb(0, 0, 255);
@@ -508,25 +529,30 @@ body{
   align-items: center;
   padding: 50px 100px;
   padding-top: 150px;
-  .jumbotron{
-    width: 100%;
-    height: 100%;
-    background-color: rgb(255, 255, 255);
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
+
     -webkit-box-shadow: 0px 2px 14px 0px #0000001a;
     -moz-box-shadow: 0px 2px 14px 0px #0000001a;
     -o-box-shadow: 0px 2px 14px 0px #0000001a;
     box-shadow: 0px 2px 14px 0px #0000001a;
+
+
     padding: 120px;
     .title-jumbotron-container{
       width: 700px;
+
+
+    padding: 120px;
+
+    .title-jumbotron-container{
+      width: 700px;
+
+
       h1{
         font-weight: 900;
         font-size: 60px;
       }
     }
+
     .description-jumbotron{
         margin-right: 100px;
         margin-top: 50px;
@@ -534,6 +560,7 @@ body{
         font-size: 24px;
         line-height: 1.7;
     }
+
     .register-jumbotron-btn{
       border: none;
       padding: 15px 70px;
@@ -544,6 +571,7 @@ body{
       border-radius: 10px;
       margin-top: 40px;
     }
+
     img{
       width: 60%;
       position: absolute;
@@ -553,8 +581,12 @@ body{
     }
   }
 }
+
 @media screen and (max-width: 1200px) {
+
 }
+
+
 .main-section{
   width: 100%;
   background-color: white;
@@ -562,11 +594,18 @@ body{
 }
 .sponsored-apartment{
   width: 100%;
+
   padding: 0 100px;
+
+  background-color: rgb(241, 241, 241);
+
+
+
   h3{
     font-weight: 700;
     font-size: 35px;
   }
+
   p{
     font-size: 20px;
   }
@@ -578,13 +617,7 @@ body{
 .card-div{
   display: flex;
 }
-/* .filter-row {
-  width: 100%;
-  height: 100px;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+
 .titolo {
   width: 100%;
   background-color: #5968ef;
@@ -643,174 +676,5 @@ body{
     align-items: center;
   }
 }
-.distance-filter-section {
-.distance-filter-section { */
-  /* Stili di base */
-  /* opacity: 0; */
-  /* opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-.distance-filter-section .active {
-  opacity: 1;
-}
-.container {
-  padding: 0px 0;
-}
-.relative {
-  position: relative;
-}
-.carousel {
-  display: flex;
-  justify-content: center;
-  position: relative;
-}
-.carousel img {
-  width: 100%;
-  height: calc(75vh - 81px);
-  object-fit: cover;
-  object-position: center;
-}
-.carousel img:not(.active) {
-  display: none;
-}
-.barra-ricerca {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-}
-input[type="checkbox"] {
-  widows: 100px;
-  height: 100px;
-  margin-bottom: 10px;
-}
-input[type="text"],
-input[type="number"] {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  width: 100%;
-}
-.fa-sliders {
-  cursor: pointer;
-  transition-duration: 0.3s;
-  color: #7b7b7b;
-  &:hover {
-    color: #000;
-  }
-}
-.searchbar-size {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  top: 60px;
-  font-size: 20px;
-  right: 50%;
-  transform: translate(0, -100%);
-}
-.search-bar {
-  height: 100px;
-  background-color: rgb(255, 255, 255);
-  z-index: 999;
-  bottom: -50px;
-  box-shadow: 0px 6px 10px 5px rgba(42, 42, 42, 0.069);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 25px;
-  position: relative;
-  .search-elem {
-    padding: 0 20px;
-    border-right: 1px solid rgb(213, 213, 213);
-    &:nth-last-child(3) {
-      border-right: 1px solid rgba(253, 0, 0, 0);
-    }
-  }
-  .search-btn {
-    height: 60px;
-    width: 60px;
-    background-color: black;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .search-elem label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 800;
-  }
-  .search-elem input {
-    border: none;
-    &:focus {
-      outline: none !important;
-      border: 1px solid rgb(0, 0, 0);
-    }
-  }
-}
-.distance-filter-section {
-  width: 100%;
-  background-color: rgb(255, 255, 255);
-  position: absolute;
-  top: 120px;
-  border-radius: 10px;
-  opacity: 1;
-  transition-duration: 0.3s;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  padding: 0 50px;
-  font-size: 20px;
-}
-input.largerCheckbox {
-  width: 20px;
-  height: 20px;
-}
-.filter-section {
-  width: 25%;
-  height: 70px;
-  background-color: rgb(255, 255, 255);
-  position: absolute;
-  right: 0;
-  top: 120px;
-  border-radius: 10px;
-  opacity: 0;
-  transition-duration: 0.3s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-weight: 700;
-  padding: 0 50px;
-  font-size: 14px;
-  .rooms-number-input {
-    width: 40px;
-  }
-}
-.distance-filter-section {
-  height: 70px;
-  background-color: rgb(255, 255, 255);
-  position: absolute;
-}
-.slider {
-  width: 65%;
-  cursor: grab;
-  margin-right: 20px;
-}
-.sponsored-section {
-  padding: 0 30px;
-  overflow-x: scroll;
-  .card-div {
-    width: 100%;
-    display: flex;
-    margin-right: 20px;
-  }
-}
-.apartment-sponsored-title {
-  font-weight: 700;
-  text-align: center;
-  padding: 0 500px;
-}
-} */
+
 </style>

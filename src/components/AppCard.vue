@@ -8,10 +8,12 @@ export default {
 </script>
 
 <template>
+
   <div class="col-xl-2 col-lg-3">
     <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
       class="text-decoration-none me-3">
+
       <div class="my-card">
         <div class="img-container">
           <img
@@ -49,10 +51,17 @@ export default {
 <style lang="scss">
 @use "../style/general.scss";
 
+
 .img-container {
   width: 270px;
   height: 270px;
   overflow: hidden; 
+
+.my-card {
+
+
+
+
   img {
     width: 100%;
     height: 100%;
@@ -60,17 +69,24 @@ export default {
     border-radius: 15px;
   }
 }
+
 h2{
   font-weight: 700;
   color: black;
   margin-top: 10px;
   font-size: 20px;
 }
+
+}
+
 p{
   color: rgb(116, 116, 116);
   margin-top: -5px;
 }
+
+
 /* .my-card {
+
   width: 100%; 
   background-color: rgb(255, 255, 255);
   border-radius: 20px;
