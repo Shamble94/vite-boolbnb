@@ -12,7 +12,7 @@ export default {
 <template>
   
 
-  <div class="col-12 col-xl-2 col-lg-3" v-if="card.visibility == 'Si'" >
+  <div class="col-12 col-md-5 col-lg-4 col-xxl-3" v-if="card.visibility == 'Si'" >
     <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
       class="text-decoration-none me-3">
@@ -101,8 +101,13 @@ Phone 576px
 Tablet 768px
 ******************************* 
 */
-@media screen and (min-width:768px){
-
+@media screen and (min-width:577px) and (max-width: 991px){
+  .centrale-phone{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
 
 }
 
