@@ -190,7 +190,7 @@ export default {
                 >Dimensioni:
                 <span class="fw-light text-dark">{{
                   apartment.square_meters
-                }}</span></span
+                }} mq</span></span
               >
             </li>
             <li>
@@ -322,6 +322,7 @@ export default {
   position: absolute;
   right: 0;
   padding: 50px;
+  margin-top: 50px;
 
   label {
     color: white;
