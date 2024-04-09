@@ -484,7 +484,7 @@ export default {
       </div> 
       <!-- Liste card -->
       <div class="container-fluid p-0">
-        <div class="row">
+        <div class="row space-around-phone">
           <AppCard v-if="this.citta != ''"
             class="me-5"
             v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
@@ -702,6 +702,7 @@ Phone 576px
   .title-section{
     text-align: center;
   }
+
 }
 /* 
 *******************************
@@ -709,7 +710,12 @@ Tablet 768px
 ******************************* 
 */
 @media screen and (min-width:768px){
-
+  .space-around-phone{
+    justify-content: space-around;
+  }
+  .me-5{
+    margin: 0px !important;
+  }
 
 }
 
