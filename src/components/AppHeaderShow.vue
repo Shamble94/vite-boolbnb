@@ -179,6 +179,11 @@ header {
   display: none
 }
 }
+@media screen and (min-width:993px) and (max-width: 1180px){
+    .colore-viola{
+    display: none
+  }
+}
 
 
 </style>

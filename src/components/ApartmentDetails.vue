@@ -476,6 +476,9 @@ li {
 Phone 576px
 ******************************* 
 */
+
+
+
 @media screen and (max-width: 576px){
   .text-center-phone{
   text-align: center;
@@ -488,5 +491,6 @@ Phone 576px
   display: none
 }
 }
+
 
 </style>
