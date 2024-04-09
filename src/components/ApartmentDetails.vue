@@ -314,15 +314,19 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@use "../style/style.css";
+@use "../style/general.scss";
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
 
 .footer-show {
   width: calc(100% - 60vw);
-  background-color: #151515;
   position: absolute;
   right: 0;
   padding: 50px;
   margin-top: 50px;
+  background-color: black;
 
   label {
     color: white;

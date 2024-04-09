@@ -1,0 +1,18 @@
+@media screen and (max-width: 992px) {
+    .photo-container{
+        display: none;
+    }
+
+    .space-left{
+        display: none;
+    }
+
+    .info-container{
+        width: 100% !important;
+        padding: 200px 50px !important;
+    }
+
+    .footer-show{
+        width: 100% !important;
+    }
+  }
