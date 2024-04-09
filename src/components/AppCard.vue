@@ -9,7 +9,7 @@ export default {
 </script>
 
 <template>
-  <div class="col-xl-2 col-lg-3">
+  <div class="col-xl-2 col-lg-3" v-if="card.visibility == 'Si'">
     <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
       class="text-decoration-none me-3">

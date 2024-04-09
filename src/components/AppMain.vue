@@ -466,7 +466,7 @@ export default {
         <div class="row">
           <AppCard v-if="this.citta != ''"
             class="me-5"
-            v-for="(card, index) in this.ListaFiltrata"
+            v-for="(card, index) in this.ListaFiltrata.slice().reverse()"
             :key="index"
             :card="card"
             @click="handleCardClick(card)"
