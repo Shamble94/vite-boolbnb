@@ -15,4 +15,29 @@
     .footer-show{
         width: 100% !important;
     }
+
+    .jumbo-background{
+        padding: 150px 20px !important;
+    }
+
+    .jumbotron{
+        padding: 40px !important;
+    }
+
+    .title-jumbotron{
+        font-size: 40px !important;
+        text-align: center;
+    }
+
+    .description-jumbotron{
+        text-align: center;
+        margin-right: 0 !important;
+    }
+
+    img{
+        margin-top: 1000px;
+    }
+    
   }
+
+  

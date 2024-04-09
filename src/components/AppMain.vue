@@ -328,19 +328,21 @@ export default {
 <template>
   <AppHeader @search-city="ricerca" />
 
-  
-
   <div class="jumbo-background">
-    <div class="jumbotron">
-      <div class="title-jumbotron-container">
-        <h1>Trova l'appartamento perfetto per te!</h1>
-        <p class="description-jumbotron">Benvenuto nel tuo portale per la casa perfetta! Scopri la nostra  variegata selezione di appartamenti, dall'elegante al moderno. Trova la  tua dimora ideale con noi oggi stesso!</p>
-        <button class="register-jumbotron-btn"><a href="http://127.0.0.1:8000/register" class="text-light">Registrati</a></button>
-
-        <div class="img-jumbotron-container">
-          <img src="/pngegg.png" alt="Foto appartamento">
+    <div class="jumbotron mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-7 col-12 d-lg-block d-flex justify-content-center flex-column">
+            <h1 class="title-jumbotron">Trova l'appartamento perfetto per te!</h1>
+            <p class="description-jumbotron">Benvenuto nel tuo portale per la casa perfetta! Scopri la nostra  variegata selezione di appartamenti, dall'elegante al moderno. Trova la  tua dimora ideale con noi oggi stesso!</p>
+            <button class="register-jumbotron-btn"><a href="http://127.0.0.1:8000/register" class="text-light">Registrati</a></button>
+          </div>
+          <div class="col-lg-5 col-12">
+            <div class="img-jumbotron-container d-none d-lg-block">
+              <img src="/pngegg.png" alt="Foto appartamento">
+            </div>
+          </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -538,6 +540,7 @@ export default {
 </template>
 
 <style lang="scss" scoped>
+@use "../style/style.css";
 @use "../style/general.scss";
 
 .is-sponsored {
@@ -571,12 +574,9 @@ a{
     -o-box-shadow: 0px 2px 14px 0px #0000001a;
     box-shadow: 0px 2px 14px 0px #0000001a;
     padding: 120px;
-    .title-jumbotron-container{
-      width: 700px;
-      h1{
+    .title-jumbotron{
         font-weight: 900;
         font-size: 60px;
-      }
     }
     .description-jumbotron{
         margin-right: 100px;
