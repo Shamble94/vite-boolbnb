@@ -320,6 +320,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
 
+
 .footer-show {
   width: calc(100% - 60vw);
   position: absolute;
