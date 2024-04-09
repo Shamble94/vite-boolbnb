@@ -114,11 +114,11 @@ export default {
   <!-- HEADER -->
   <header class="d-flex align-items-center" style="position: fixed; width: 100%; z-index: 999;">
 
-    <div class="container-fluid p-5">
+    <div class="container-fluid p-none-phone p-md-5 mt-5 mt-md-0">
       <div class="row">
 
        <!-- SEZIONE LOGO -->
-<div class="col-3">
+<div class="col-6 p-4 p-sm-0 col-md-3 order-1 order-md-1">
   <div class="content colore-viola">
     <!-- RITORNO ALLA HOME -->
     <a class="d-flex align-items-center" href="http://localhost:5174">
@@ -136,13 +136,13 @@ export default {
             fill="#5968EF" />
         </g>
       </svg>
-      <span class="fw-bolder fs-2 ms-3 colore-viola">BoolBnB</span>
+      <span class="fw-bolder fs-2 ms-3 colore-viola dnone">BoolBnB</span>
     </a>
   </div>
 </div>
 
         <!-- SEZIONE RICERCA -->
-        <div class="col-6 align-items-center d-flex justify-content-center">
+        <div class="col-12 col-md-6 align-items-center d-flex justify-content-center order-2 order-md-1">
           <div class="searchbar" ref="searchbar">
 
             <!-- ICONA LENTE DI INGRANDIMENTO -->
@@ -193,7 +193,7 @@ export default {
         </div>
 
         <!-- BOTTONE VENDITORE -->
-        <div class="col-3 align-items-center d-flex justify-content-end">
+        <div class="col-6 p-4 p-sm-0  col-md-3 align-items-center d-flex justify-content-end order-1 order-md-1">
           <a href="http://127.0.0.1:8000/register" class="register-button">Registrati</a>
           <button type="button" class="vendor-button sfondo-viola">
             <a href="http://127.0.0.1:8000/login">Modalità venditore</a>
@@ -376,4 +376,41 @@ header {
 .input-field {
   width: 100%;
 }
+.p-none-phone{
+    padding: 10px !important;
+  }
+
+/* 
+*******************************
+Phone 576px
+******************************* 
+*/
+@media screen and (max-width: 576px){
+  .dnone{
+    display: none;
+  }
+  .p-none-phone{
+    padding: 5px !important;
+  }
+}
+/* 
+*******************************
+Tablet 768px
+******************************* 
+*/
+@media screen and (min-width:768px){
+
+
+}
+
+/* 
+*******************************
+PC 992px
+******************************* 
+*/
+@media screen and (min-width:992px){
+
+
+}
+
 </style>
