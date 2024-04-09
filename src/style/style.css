@@ -1,7 +1,4 @@
 @media screen and (max-width: 992px) {
-    .photo-container{
-        display: none;
-    }
 
     .space-left{
         display: none;
@@ -32,10 +29,6 @@
     .description-jumbotron{
         text-align: center;
         margin-right: 0 !important;
-    }
-
-    img{
-        margin-top: 1000px;
     }
     
   }

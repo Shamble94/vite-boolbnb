@@ -162,7 +162,7 @@ export default {
 
   <div class="container-fluid p-0 m-0 text-center-phone">
     <div class="remove-test">
-      <div class="photo-container col-12">
+      <div class="photo-container col-12 d-none d-lg-block">
         <img
           v-if="apartment.image !== '0'"
           :src="`${store.baseUrl}/storage/${apartment.image}`"
@@ -178,6 +178,20 @@ export default {
       </div>
       <div class="space-left"></div>
       <div class="info-container">
+        <div class="photo-mobile-container mb-5 d-lg-none d-block">
+          <img
+          v-if="apartment.image !== '0'"
+          :src="`${store.baseUrl}/storage/${apartment.image}`"
+          class="card-img-top border-radius"
+          :alt="apartment.description"
+        />
+        <img
+          v-else
+          src="/placeholder2.png"
+          class="card-img-top border-radius"
+          :alt="apartment.description"
+        />
+        </div>
         <div class="info-single-section margine-superiore">
           <h1>{{ apartment.address }}</h1>
           <p>{{ apartment.description }}</p>
@@ -323,6 +337,9 @@ export default {
 @use "../style/general.scss";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+.border-radius{
+  border-radius: 10px;
+}
 .confirmation-message {
   background-color: #dff0d8;
   color: #3c763d;
