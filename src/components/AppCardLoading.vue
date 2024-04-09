@@ -9,7 +9,7 @@ export default {
 
 <template>
   
-  <div class="col-xl-2 col-lg-3 mb-3">
+  <div class="col-12 col-md-5 col-lg-4 col-xxl-3">
 
       <div class="my-card">
         <div class="img-container animated-gradient">
@@ -41,7 +41,7 @@ export default {
 }
 
 .info{
-    width: 100%;
+    width: 250px;
     height: 20px;
     border-radius: 5px;
     margin-top: 10px;
@@ -77,6 +77,10 @@ h2{
 p{
   color: rgb(116, 116, 116);
   margin-top: -5px;
+}
+
+.my-card{
+  margin-bottom: 100px;
 }
 /* .my-card {
   width: 100%; 

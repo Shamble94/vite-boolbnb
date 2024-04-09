@@ -453,7 +453,7 @@ export default {
 
           <AppCardLoading
             v-if="isLoading"
-            class="me-5"
+            class=""
             v-for="index in cardLoadingLoop"
             :key="index"
             :isLoading="!isLoading"
