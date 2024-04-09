@@ -616,7 +616,7 @@ a{
   padding: 0 100px;
   h3{
     font-weight: 700;
-    font-size: 35px;
+    font-size: 26px;
   }
   p{
     font-size: 20px;
