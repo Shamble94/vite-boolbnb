@@ -78,6 +78,7 @@ h2{
   color: black;
   margin-top: 10px;
   font-size: 20px;
+  margin-right: 130px;
 }
 p{
   color: rgb(116, 116, 116);
