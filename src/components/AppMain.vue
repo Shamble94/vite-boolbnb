@@ -3,16 +3,21 @@ import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
 import AppHeader from "./AppHeader.vue";
+import AppCardLoading from "./AppCardLoading.vue";
 
 export default {
   name: "AppMain",
   components: {
     AppCard,
     AppHeader,
+    AppCardLoading
   },
   data() {
     return {
       store,
+      cardLoadingLoop: 5,
+      cardLoadingLoopMain: 20,
+      isLoading: true,
       isFilterSectionVisible: false,
       isCityInputActive: false,
       ListaAppartamentiPivot: [],
@@ -74,7 +79,7 @@ export default {
     ricerca(location) {
   this.citta = location;
   this.ListaFiltrata = [];
-  if (this.citta.length == 0 || this.citta == "" || this.citta == "gg") {
+  if (this.citta.length == 0 || this.citta == "") {
     this.ListaFiltrata = this.ListaAppartamenti;
     return;
   }
@@ -274,6 +279,7 @@ export default {
         });
 
         this.ListaFiltrata = this.ListaAppartamenti;
+        this.isLoading = false;
       })
       .catch((error) => {
         console.error("Error fetching pivot apartments:", error);
@@ -322,6 +328,7 @@ export default {
 <template>
   <AppHeader @search-city="ricerca" />
 
+  
 
   <div class="jumbo-background">
     <div class="jumbotron">
@@ -425,16 +432,28 @@ export default {
       >
         Non ci sono appartamenti che rispecchiano i filtri inseriti
       </div> 
+
+
+      </div>
       <!-- Liste card -->
       <div class="container-fluid p-0">
         <div class="row">
-          <AppCard
+          <AppCard v-if="!isLoading"
               class="me-5"
               v-for="(card, index) in ListaAppartamentiPivot"
               :key="'pivot_' + index"
               :card="card"
               @click="handleCardClick(card)"
-            />
+              :isLoading="isLoading"
+          />
+
+          <AppCardLoading
+            v-if="isLoading"
+            class="me-5"
+            v-for="index in cardLoadingLoop"
+            :key="index"
+            :isLoading="!isLoading"
+          />
         </div>
       </div>
     </div>
@@ -472,6 +491,13 @@ export default {
             @click="handleCardClick(card)"
             :isSponsored="card.isSponsored"
           />
+          <AppCardLoading
+            v-if="isLoading"
+            class="me-5"
+            v-for="index in cardLoadingLoopMain"
+            :key="index"
+            :isLoading="!isLoading"
+          />
           
           <AppCard 
             class="me-5"
@@ -486,7 +512,7 @@ export default {
       </div>
     </div>
   </div>
-</div>
+
 
 
   
