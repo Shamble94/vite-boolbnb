@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       store,
-      cardLoadingLoop: 5,
+      cardLoadingLoop: 4,
       cardLoadingLoopMain: 20,
       isLoading: true,
       isFilterSectionVisible: false,
@@ -424,17 +424,17 @@ export default {
 
 
   <div class="sponsored-apartment" v-if="this.citta == ''">
-    <div class="title-section">
+    <div class="title-section" >
       <h3>Appartamenti in evidenza</h3>
       <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati.</p>
     </div>
 
     <div class="card-container mt-5">
       <div
-        v-if="showNoApartmentsMessage"
         class="no-apartments-message text-center"
+        v-if="showNoApartmentsMessage"
       >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
+        Nessun appartamento trovato
       </div> 
 
 
@@ -453,7 +453,7 @@ export default {
 
           <AppCardLoading
             v-if="isLoading"
-            class="me-5"
+            class=""
             v-for="index in cardLoadingLoop"
             :key="index"
             :isLoading="!isLoading"
@@ -470,8 +470,8 @@ export default {
         <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
       </div>
       <div v-else>
-        <h3>Appartamenti ricercati</h3>
-        <p>In questa sezione trovi gli appartamenti in base <br> alle tue ricerche</p>
+        <h3 v-if="!showNoApartmentsMessage">Appartamenti ricercati</h3>
+        <p v-if="!showNoApartmentsMessage">In questa sezione trovi gli appartamenti in base <br> alle tue ricerche</p>
       </div>
     
       
@@ -480,9 +480,11 @@ export default {
     <div class="card-container mt-5">
       <div
         v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center mb-5"
+        class="no-apartments-message text-center mb-5 pb-5"
       >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      <i class="fa-solid fa-face-sad-tear fs-1 mb-3"></i>
+      <h2 class="mb-5 fw-bolder">Non sono stati trovati appartamenti</h2>
+        
       </div> 
       <!-- Liste card -->
       <div class="container-fluid p-0">
@@ -636,7 +638,7 @@ a{
 .filter-row {
   width: 100%;
   position: relative;
-  display: flex;
+  display: fixed;
   align-items: center;
 }
 
@@ -662,8 +664,9 @@ a{
   background-color: rgb(255, 255, 255);
   -webkit-box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.051); 
   box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.051);
-  position: absolute;
-  right: 100px;
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
   border-radius: 100px;
   display: flex;
   justify-content: center;
@@ -680,13 +683,13 @@ a{
 }
 .filters-section {
   width: 330px;
-  position: absolute;
-  right: 100px;
+  position: fixed;
+  right: 10px;
   z-index: 995;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   border: solid 1px rgb(231, 231, 231);
-  top: -25px;
+  bottom: 10px;
   .distance-section {
     margin-bottom: 10px;
   }

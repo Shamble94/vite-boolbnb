@@ -78,6 +78,7 @@ h2{
   color: black;
   margin-top: 10px;
   font-size: 20px;
+  margin-right: 130px;
 }
 p{
   color: rgb(116, 116, 116);
@@ -95,6 +96,10 @@ Phone 576px
     align-items: center;
     flex-direction: column;
   }
+
+  h2{
+    margin-right: 0;
+  }
 }
 /* 
 *******************************
@@ -107,6 +112,10 @@ Tablet 768px
     display: flex;
     align-items: center;
     flex-direction: column;
+  }
+
+  h2{
+    margin-right: 0;
   }
 
 }
