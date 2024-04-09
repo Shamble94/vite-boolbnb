@@ -2,6 +2,7 @@
 import { store } from "../store";
 import axios from "axios";
 import AppCard from "./AppCard.vue";
+import AppFooter from "./AppFooter.vue";
 import AppHeader from "./AppHeader.vue";
 import AppCardLoading from "./AppCardLoading.vue";
 
@@ -11,6 +12,7 @@ export default {
     AppCard,
     AppHeader,
     AppCardLoading,
+    AppFooter
   },
   data() {
     return {
@@ -515,6 +517,7 @@ export default {
     </div>
   </div>
 
+  <AppFooter />
 
 
   
