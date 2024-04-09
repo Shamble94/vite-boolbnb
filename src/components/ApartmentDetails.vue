@@ -160,9 +160,12 @@ export default {
     href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css"
   />
 
+
+
   <div class="container-fluid p-0 m-0 text-center-phone">
     <div class="remove-test">
       <div class="photo-container col-12 d-none d-lg-block">
+        <div v-if="apartment && apartment.image == '0'"></div>
         <img
           v-if="apartment.image !== '0'"
           :src="`${store.baseUrl}/storage/${apartment.image}`"
@@ -337,6 +340,16 @@ export default {
 @use "../style/general.scss";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+.animated-gradient {
+  animation: animateBg 2s linear infinite;
+  background-image: linear-gradient(90deg,#d6d6d6,#ffffff,#d6d6d6,#ffffff);
+  background-size: 300% 100%;
+}
+@keyframes animateBg {
+  0% { background-position: 100% 0%; }
+  100% { background-position: 0% 0%; }
+}
+
 .border-radius{
   border-radius: 10px;
 }
@@ -410,7 +423,6 @@ li {
 
   .space-left {
     width: 60vw;
-    background-color: red;
   }
 
   .info-container {
