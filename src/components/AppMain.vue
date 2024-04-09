@@ -532,6 +532,7 @@ a{
   align-items: center;
   padding: 50px 100px;
   padding-top: 150px;
+
   .jumbotron{
     width: 100%;
     height: 100%;
@@ -602,32 +603,26 @@ a{
 .card-div{
   display: flex;
 }
+
 .filter-row {
   width: 100%;
-  height: 100px;
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/*
-.titolo {
-  width: 100%;
-  background-color: #5968ef;
-  border-radius: 10px;
-  color: white;
-  font-size: 30px;
-  font-weight: bold;
-} */
+
 .filter-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   i {
     font-size: 20px;
     margin-right: 10px;
     cursor: pointer;
   }
+
 }
 /* .ruotare {
   transform: rotate(60deg);
@@ -636,6 +631,8 @@ a{
   width: 50px;
   height: 50px;
   background-color: rgb(255, 255, 255);
+  -webkit-box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.051); 
+  box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.051);
   position: absolute;
   right: 100px;
   border-radius: 100px;
@@ -656,11 +653,11 @@ a{
   width: 330px;
   position: absolute;
   right: 100px;
-  z-index: 9999;
+  z-index: 995;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   border: solid 1px rgb(231, 231, 231);
-  top: 25%;
+  top: -25px;
   .distance-section {
     margin-bottom: 10px;
   }
