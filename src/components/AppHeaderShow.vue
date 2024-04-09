@@ -173,4 +173,12 @@ header {
     position: relative;
   }
 }
+@media screen and (max-width: 576px){
+  
+.colore-viola{
+  display: none
+}
+}
+
+
 </style>

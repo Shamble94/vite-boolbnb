@@ -472,6 +472,9 @@ Phone 576px
   width: 100%;
   height: 100px;
 }
+.colore-viola{
+  display: none
+}
 }
 
 </style>
