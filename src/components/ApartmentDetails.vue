@@ -2,12 +2,12 @@
 import { store } from "../store.js";
 import axios from "axios";
 import tt from "@tomtom-international/web-sdk-maps";
-import AppHeader from "./AppHeader.vue";
+import AppHeaderShow from "./AppHeaderShow.vue";
 
 export default {
   name: "ApartmentDetail",
   components: {
-    AppHeader,
+    AppHeaderShow,
   },
 
   data() {
@@ -149,7 +149,7 @@ export default {
 </script>
 
 <template>
-  <AppHeader @search-city="ricerca" />
+  <AppHeaderShow />
 
   <link
     rel="stylesheet"
@@ -318,9 +318,6 @@ export default {
 @use "../style/general.scss";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
-
-
-
 .footer-show {
   width: calc(100% - 60vw);
   position: absolute;

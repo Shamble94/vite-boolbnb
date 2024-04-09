@@ -15,7 +15,6 @@ export default {
 </script>
 
 <template lang="">
-  <AppHeader />
   <router-view></router-view>
   <AppFooter />
 </template>
