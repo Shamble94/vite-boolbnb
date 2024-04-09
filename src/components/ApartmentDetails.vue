@@ -160,9 +160,9 @@ export default {
     href="https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.12.0/maps/maps.css"
   />
 
-  <div class="container-fluid p-0 m-0">
+  <div class="container-fluid p-0 m-0 text-center-phone">
     <div class="remove-test">
-      <div class="photo-container">
+      <div class="photo-container col-12">
         <img
           v-if="apartment.image !== '0'"
           :src="`${store.baseUrl}/storage/${apartment.image}`"
@@ -441,4 +441,20 @@ li {
   width: 100%;
   height: 500px;
 }
+
+/* 
+*******************************
+Phone 576px
+******************************* 
+*/
+@media screen and (max-width: 576px){
+  .text-center-phone{
+  text-align: center;
+}
+.photo-container{
+  width: 100%;
+  height: 100px;
+}
+}
+
 </style>
