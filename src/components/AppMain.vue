@@ -636,7 +636,7 @@ a{
 .filter-row {
   width: 100%;
   position: relative;
-  display: flex;
+  display: fixed;
   align-items: center;
 }
 
@@ -662,8 +662,9 @@ a{
   background-color: rgb(255, 255, 255);
   -webkit-box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.051); 
   box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.051);
-  position: absolute;
-  right: 100px;
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
   border-radius: 100px;
   display: flex;
   justify-content: center;
@@ -680,13 +681,13 @@ a{
 }
 .filters-section {
   width: 330px;
-  position: absolute;
-  right: 100px;
+  position: fixed;
+  right: 10px;
   z-index: 995;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   border: solid 1px rgb(231, 231, 231);
-  top: -25px;
+  bottom: 10px;
   .distance-section {
     margin-bottom: 10px;
   }
