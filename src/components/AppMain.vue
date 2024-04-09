@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       store,
-      cardLoadingLoop: 5,
+      cardLoadingLoop: 4,
       cardLoadingLoopMain: 20,
       isLoading: true,
       isFilterSectionVisible: false,
@@ -424,17 +424,17 @@ export default {
 
 
   <div class="sponsored-apartment" v-if="this.citta == ''">
-    <div class="title-section">
+    <div class="title-section" >
       <h3>Appartamenti in evidenza</h3>
       <p>Qui troverai gli appartamenti sponsorizzati e più <br> apprezzati.</p>
     </div>
 
     <div class="card-container mt-5">
       <div
-        v-if="showNoApartmentsMessage"
         class="no-apartments-message text-center"
+        v-if="showNoApartmentsMessage"
       >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
+        Nessun appartamento trovato
       </div> 
 
 
@@ -470,8 +470,8 @@ export default {
         <p>In questa sezione potrai vedere gli appartamenti <br> aggiunti di recente.</p>
       </div>
       <div v-else>
-        <h3>Appartamenti ricercati</h3>
-        <p>In questa sezione trovi gli appartamenti in base <br> alle tue ricerche</p>
+        <h3 v-if="!showNoApartmentsMessage">Appartamenti ricercati</h3>
+        <p v-if="!showNoApartmentsMessage">In questa sezione trovi gli appartamenti in base <br> alle tue ricerche</p>
       </div>
     
       
@@ -480,9 +480,11 @@ export default {
     <div class="card-container mt-5">
       <div
         v-if="showNoApartmentsMessage"
-        class="no-apartments-message text-center mb-5"
+        class="no-apartments-message text-center mb-5 pb-5"
       >
-        Non ci sono appartamenti che rispecchiano i filtri inseriti
+      <i class="fa-solid fa-face-sad-tear fs-1 mb-3"></i>
+      <h2 class="mb-5 fw-bolder">Non sono stati trovati appartamenti</h2>
+        
       </div> 
       <!-- Liste card -->
       <div class="container-fluid p-0">

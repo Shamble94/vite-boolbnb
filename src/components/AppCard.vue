@@ -96,6 +96,10 @@ Phone 576px
     align-items: center;
     flex-direction: column;
   }
+
+  h2{
+    margin-right: 0;
+  }
 }
 /* 
 *******************************
@@ -108,6 +112,10 @@ Tablet 768px
     display: flex;
     align-items: center;
     flex-direction: column;
+  }
+
+  h2{
+    margin-right: 0;
   }
 
 }
