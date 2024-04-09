@@ -328,7 +328,7 @@ export default {
       <div class="title-jumbotron-container">
         <h1>Trova l'appartamento perfetto per te!</h1>
         <p class="description-jumbotron">Benvenuto nel tuo portale per la casa perfetta! Scopri la nostra  variegata selezione di appartamenti, dall'elegante al moderno. Trova la  tua dimora ideale con noi oggi stesso!</p>
-        <button class="register-jumbotron-btn">Registrati</button>
+        <button class="register-jumbotron-btn"><a href="http://127.0.0.1:8000/register" class="text-light">Registrati</a></button>
 
         <div class="img-jumbotron-container">
           <img src="/pngegg.png" alt="Foto appartamento">
@@ -520,6 +520,9 @@ export default {
 
 body{
   background-color: white;
+}
+a{
+  text-decoration: none;
 }
 .jumbo-background{
   width: 100%;
