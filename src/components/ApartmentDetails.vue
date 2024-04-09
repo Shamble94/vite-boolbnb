@@ -50,6 +50,7 @@ export default {
         email: this.email,
         subject: this.subject,
         message: this.message,
+        showConfirmationMessage: false
       };
 
       // Faccio la chiamata passando i dati
@@ -61,9 +62,11 @@ export default {
             this.email = "";
             this.subject = "";
             this.message = "";
-            this.result_message = true;
-            if (this.result_message) {
-              this.showSuccessAlert = true;
+            this.showConfirmationMessage = true;
+
+            if (this.showConfirmationMessage) {
+              this.showConfirmationMessage = true;
+
 
               // Imposta un timeout per nascondere l'alert dopo alcuni secondi (ad esempio, 3 secondi)
               setTimeout(() => {
@@ -246,7 +249,9 @@ export default {
             <div ref="map" id="map"></div>
           </div>
         </div>
-
+        <div v-if="showConfirmationMessage" class="confirmation-message">
+      Messaggio inviato correttamente!
+    </div>
         <div class="footer-show">
           <h3>Contatta il venditore</h3>
           <form ref="form" @submit.prevent="sendMessage" class="m-3">
@@ -318,6 +323,14 @@ export default {
 @use "../style/general.scss";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+.confirmation-message {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
 .footer-show {
   width: calc(100% - 60vw);
   position: absolute;
