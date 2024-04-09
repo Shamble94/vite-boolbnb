@@ -10,7 +10,7 @@ export default {
   components: {
     AppCard,
     AppHeader,
-    AppCardLoading
+    AppCardLoading,
   },
   data() {
     return {
