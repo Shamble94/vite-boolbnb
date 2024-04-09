@@ -14,7 +14,7 @@ export default {
     class="d-flex align-items-center"
     style="position: fixed; z-index: 999"
   >
-    <div class="container-fluid p-5">
+    <div class="container-fluid p-3 p-lg-5">
       <div class="row">
         <!-- SEZIONE LOGO -->
         <div class="col-6">
@@ -64,6 +64,11 @@ export default {
 </template>
 
 <style lang="scss">
+@media screen and (max-width: 992px) {
+  header{
+    width: 100% !important;
+  }
+}
 header {
   width: calc(100% - 60vw);
   right: 0;
