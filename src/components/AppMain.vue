@@ -523,8 +523,7 @@ body{
 }
 .jumbo-background{
   width: 100%;
-  background: rgb(0, 0, 255);
-  background: linear-gradient(184deg, rgba(223,223,236,1) 0%, rgba(225,228,235,1) 50%, rgba(255,255,255,1) 100%);
+  background: linear-gradient(180deg, rgba(223,223,236,1) 0%, rgba(225,228,235,1) 50%, rgba(255,255,255,1) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
