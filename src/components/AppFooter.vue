@@ -7,7 +7,7 @@ export default {
     <footer class="mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-xl-4">
+                <div class="col-6 col-xl-4">
                     <div class="content">
                         <div class="logo d-flex align-items-center flex-direction-column">
                             <svg class="Colore-viola" width="50" height="55" viewBox="0 0 70 55" fill="none"
@@ -39,7 +39,7 @@ export default {
                         </ul>
                     </div>
                 </div>
-                <div class="col-xl-3">
+                <div class="col-6 col-xl-3">
                     <div class="content">
                         <h2>Informazioni</h2>
                         <ul class="list-unstyled">
@@ -51,7 +51,7 @@ export default {
                         </ul>
                     </div>
                 </div>
-                <div class="col-xl-3">
+                <div class="col-6 col-xl-3">
                     <div class="content">
                         <h2>Link utili</h2>
                         <ul class="list-unstyled">
@@ -63,7 +63,7 @@ export default {
                         </ul>
                     </div>
                 </div>
-                <div class="col-xl-2 ">
+                <div class="col-6 col-xl-2 ">
                     <div class="content">
                         <h2>Contattaci</h2>
                         <ul class="list-unstyled">
@@ -112,4 +112,38 @@ export default {
             color: white;
         }
     }
+/* 
+*******************************
+Phone 576px
+******************************* 
+*/
+@media screen and (max-width: 576px){
+    footer{
+        text-align: center;
+        padding: 0px;
+        padding-top: 50px;
+        .logo{
+            justify-content: center;
+        }
+    }
+}
+/* 
+*******************************
+Tablet 768px
+******************************* 
+*/
+@media screen and (min-width:768px){
+
+
+}
+
+/* 
+*******************************
+PC 992px
+******************************* 
+*/
+@media screen and (min-width:992px){
+
+
+}
 </style>

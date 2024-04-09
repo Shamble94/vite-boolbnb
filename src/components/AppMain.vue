@@ -692,6 +692,37 @@ a{
     align-items: center;
   }
 }
+
+/* 
+*******************************
+Phone 576px
+******************************* 
+*/
+@media screen and (max-width: 576px){
+  .title-section{
+    text-align: center;
+  }
+}
+/* 
+*******************************
+Tablet 768px
+******************************* 
+*/
+@media screen and (min-width:768px){
+
+
+}
+
+/* 
+*******************************
+PC 992px
+******************************* 
+*/
+@media screen and (min-width:992px){
+
+
+}
+
 /* .distance-filter-section {
 .distance-filter-section {  */
   /* Stili di base */

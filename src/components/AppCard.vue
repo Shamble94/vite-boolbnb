@@ -12,11 +12,11 @@ export default {
 <template>
   
 
-  <div class="col-xl-2 col-lg-3" v-if="card.visibility == 'Si'" >
+  <div class="col-12 col-xl-2 col-lg-3" v-if="card.visibility == 'Si'" >
     <router-link 
       :to="{ name: 'ApartmentDetails', params: { id: card.id } }"
       class="text-decoration-none me-3">
-      <div class="my-card">
+      <div class="my-card centrale-phone">
         <div class="img-container">
           <img
             v-if="card.image !== '0'"
@@ -82,6 +82,38 @@ h2{
 p{
   color: rgb(116, 116, 116);
   margin-top: -5px;
+}
+/* 
+*******************************
+Phone 576px
+******************************* 
+*/
+@media screen and (max-width: 576px){
+  .centrale-phone{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+}
+/* 
+*******************************
+Tablet 768px
+******************************* 
+*/
+@media screen and (min-width:768px){
+
+
+}
+
+/* 
+*******************************
+PC 992px
+******************************* 
+*/
+@media screen and (min-width:992px){
+
+
 }
 /* .my-card {
   width: 100%; 
