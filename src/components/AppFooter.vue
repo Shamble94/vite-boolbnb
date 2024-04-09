@@ -4,7 +4,7 @@ export default {
 }
 </script>
 <template lang="">
-    <footer class="mt-5">
+    <footer class="mt-5 py-5">
         <div class="container">
             <div class="row">
                 <div class="col-6 col-xl-4">
